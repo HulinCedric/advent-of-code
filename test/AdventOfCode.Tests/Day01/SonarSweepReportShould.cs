@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Xunit;
 
 namespace AdventOfCode.Day01
@@ -21,7 +22,7 @@ namespace AdventOfCode.Day01
             var largerMeasurementCount = SonarSweepReport.CountLargerMeasurements(measurements);
 
             // Then
-            Assert.Equal(expectedLargerMeasurementCount, largerMeasurementCount);
+            largerMeasurementCount.Should().Be(expectedLargerMeasurementCount);
         }
     }
 }
