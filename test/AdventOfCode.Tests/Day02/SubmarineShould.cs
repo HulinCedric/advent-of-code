@@ -82,10 +82,33 @@ namespace AdventOfCode.Day02
             var actualPosition = submarine.Position;
             actualPosition.Should().Be(expectedPosition);
         }
+
+        [Theory]
+        [InlineData(8, 5, 3, 8, 2)]
+        public void Decreases_the_depth_position_by_number_of_unit_from_up_command(
+            int startHorizontal,
+            int startDepth,
+            int commandUnit,
+            int endHorizontal,
+            int endDepth)
+        {
+            // Given
+            var expectedPosition = new Position(endHorizontal, endDepth);
+            var submarine = new Submarine(startHorizontal, startDepth);
+
+            // When
+            submarine.Execute(new UpCommand(commandUnit));
+
+            // Then
+            var actualPosition = submarine.Position;
+            actualPosition.Should().Be(expectedPosition);
+        }
     }
 
 
     public record SubmarineCommand(int Unit);
+
+    public record UpCommand(int Unit) : SubmarineCommand(Unit);
 
     public record DownCommand(int Unit) : SubmarineCommand(Unit);
 
@@ -107,6 +130,9 @@ namespace AdventOfCode.Day02
 
         public void Execute(DownCommand command)
             => Position = Position with { Depth = Position.Depth + command.Unit };
+
+        public void Execute(UpCommand command)
+            => Position = Position with { Depth = Position.Depth - command.Unit };
     }
 
     public record Position(int Horizontal, int Depth);
