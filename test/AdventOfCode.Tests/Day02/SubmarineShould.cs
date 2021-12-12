@@ -106,13 +106,28 @@ namespace AdventOfCode.Day02
     }
 
 
-    public record SubmarineCommand(int Unit);
+    public abstract record SubmarineCommand(int Unit)
+    {
+        public abstract Position ExecuteFor(Position position);
+    }
 
-    public record UpCommand(int Unit) : SubmarineCommand(Unit);
+    public record UpCommand(int Unit) : SubmarineCommand(Unit)
+    {
+        public override Position ExecuteFor(Position position)
+            => position with { Depth = position.Depth - Unit };
+    }
 
-    public record DownCommand(int Unit) : SubmarineCommand(Unit);
+    public record DownCommand(int Unit) : SubmarineCommand(Unit)
+    {
+        public override Position ExecuteFor(Position position)
+            => position with { Depth = position.Depth + Unit };
+    }
 
-    public record ForwardCommand(int Unit) : SubmarineCommand(Unit);
+    public record ForwardCommand(int Unit) : SubmarineCommand(Unit)
+    {
+        public override Position ExecuteFor(Position position)
+            => position with { Horizontal = position.Horizontal + Unit };
+    }
 
     public class Submarine
     {
@@ -125,14 +140,8 @@ namespace AdventOfCode.Day02
 
         public Position Position { get; private set; }
 
-        public void Execute(ForwardCommand command)
-            => Position = Position with { Horizontal = Position.Horizontal + command.Unit };
-
-        public void Execute(DownCommand command)
-            => Position = Position with { Depth = Position.Depth + command.Unit };
-
-        public void Execute(UpCommand command)
-            => Position = Position with { Depth = Position.Depth - command.Unit };
+        public void Execute(SubmarineCommand command)
+            => Position = command.ExecuteFor(Position);
     }
 
     public record Position(int Horizontal, int Depth);
