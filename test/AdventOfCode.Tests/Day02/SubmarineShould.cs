@@ -37,8 +37,33 @@ namespace AdventOfCode.Day02
             // Then
             actualPosition.Should().Be(expectedPosition);
         }
+
+        [Theory]
+        [InlineData(0, 0, 5, 5, 0)]
+        [InlineData(5, 5, 8, 13, 5)]
+        [InlineData(13, 10, 2, 15, 10)]
+        public void Increases_the_horizontal_position_by_number_of_unit_from_forward_command(
+            int startHorizontal,
+            int startDepth,
+            int commandUnit,
+            int endHorizontal,
+            int endDepth)
+        {
+            // Given
+            var expectedPosition = new Position(endHorizontal, endDepth);
+            var submarine = new Submarine(startHorizontal, startDepth);
+
+            // When
+            submarine.Execute(new ForwardCommand(commandUnit));
+
+            // Then
+            var actualPosition = submarine.Position;
+            actualPosition.Should().Be(expectedPosition);
+        }
     }
 
+
+    public record ForwardCommand(int Unit);
 
     public class Submarine
     {
@@ -49,7 +74,10 @@ namespace AdventOfCode.Day02
         {
         }
 
-        public Position Position { get; }
+        public Position Position { get; private set; }
+
+        public void Execute(ForwardCommand command)
+            => Position = Position with { Horizontal = Position.Horizontal + command.Unit };
     }
 
     public record Position(int Horizontal, int Depth);
