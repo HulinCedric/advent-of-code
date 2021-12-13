@@ -1,3 +1,4 @@
+using AdventOfCode.Day02.AimCommands;
 using FluentAssertions;
 using Xunit;
 
@@ -117,36 +118,5 @@ namespace AdventOfCode.Day02
             var actualAim = submarine.Aim;
             actualAim.Should().Be(expectedAim);
         }
-    }
-
-    public record UpAimCommand(int Unit) : SubmarineAimCommand(Unit)
-    {
-        public override (Position, Aim) ExecuteFor(Submarine submarine)
-            => (submarine.Position,
-                submarine.Aim with { Value = submarine.Aim.Value - Unit });
-    }
-
-    public record DownAimCommand(int Unit) : SubmarineAimCommand(Unit)
-    {
-        public override (Position, Aim) ExecuteFor(Submarine submarine)
-            => (submarine.Position,
-                submarine.Aim with { Value = submarine.Aim.Value + Unit });
-    }
-
-    public record ForwardAimCommand(int Unit) : SubmarineAimCommand(Unit)
-    {
-        public override (Position, Aim) ExecuteFor(Submarine submarine)
-            => (submarine.Position with
-                {
-                    Horizontal = submarine.Position.Horizontal + Unit,
-                    Depth = submarine.Position.Depth + submarine.Aim.Value * Unit
-                },
-                submarine.Aim);
-    }
-
-
-    public abstract record SubmarineAimCommand(int Unit)
-    {
-        public abstract (Position, Aim) ExecuteFor(Submarine submarine);
     }
 }

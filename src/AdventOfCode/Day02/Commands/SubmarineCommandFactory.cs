@@ -1,6 +1,6 @@
 using System;
 
-namespace AdventOfCode.Day02
+namespace AdventOfCode.Day02.Commands
 {
     public static class SubmarineCommandFactory
     {

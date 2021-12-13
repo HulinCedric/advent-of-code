@@ -1,3 +1,4 @@
+using AdventOfCode.Day02.Commands;
 using FluentAssertions;
 using Xunit;
 
@@ -70,29 +71,5 @@ namespace AdventOfCode.Day02
             var actualPosition = submarine.Position;
             actualPosition.Should().Be(expectedPosition);
         }
-    }
-
-
-    public abstract record SubmarineCommand(int Unit)
-    {
-        public abstract Position ExecuteFor(Position position);
-    }
-
-    public record UpCommand(int Unit) : SubmarineCommand(Unit)
-    {
-        public override Position ExecuteFor(Position position)
-            => position with { Depth = position.Depth - Unit };
-    }
-
-    public record DownCommand(int Unit) : SubmarineCommand(Unit)
-    {
-        public override Position ExecuteFor(Position position)
-            => position with { Depth = position.Depth + Unit };
-    }
-
-    public record ForwardCommand(int Unit) : SubmarineCommand(Unit)
-    {
-        public override Position ExecuteFor(Position position)
-            => position with { Horizontal = position.Horizontal + Unit };
     }
 }

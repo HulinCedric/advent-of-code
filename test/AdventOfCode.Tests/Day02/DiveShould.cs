@@ -1,4 +1,6 @@
 using System.Linq;
+using AdventOfCode.Day02.AimCommands;
+using AdventOfCode.Day02.Commands;
 using FluentAssertions;
 using Xunit;
 
