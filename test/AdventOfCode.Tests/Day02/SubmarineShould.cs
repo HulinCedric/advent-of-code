@@ -38,111 +38,73 @@ namespace AdventOfCode.Day02
             actualPosition.Should().Be(expectedPosition);
         }
 
-        [Theory]
-        [InlineData(0, 0, 5, 5, 0)]
-        [InlineData(5, 5, 8, 13, 5)]
-        [InlineData(13, 10, 2, 15, 10)]
-        public void Increases_the_horizontal_position_by_number_of_unit_from_forward_command(
-            int startHorizontal,
-            int startDepth,
-            int commandUnit,
-            int endHorizontal,
-            int endDepth)
+        [Fact]
+        public void Start_with_aim_at_0_by_default()
         {
             // Given
-            var expectedPosition = new Position(endHorizontal, endDepth);
-            var submarine = new Submarine(startHorizontal, startDepth);
+            var expectedAim = new Aim(0);
+            var submarine = new Submarine();
 
             // When
-            submarine.Execute(new ForwardCommand(commandUnit));
+            var actualAim = submarine.Aim;
 
             // Then
-            var actualPosition = submarine.Position;
-            actualPosition.Should().Be(expectedPosition);
+            actualAim.Should().Be(expectedAim);
         }
 
         [Theory]
-        [InlineData(5, 0, 5, 5, 5)]
-        [InlineData(13, 2, 8, 13, 10)]
-        public void Increases_the_depth_position_by_number_of_unit_from_down_command(
-            int startHorizontal,
-            int startDepth,
-            int commandUnit,
-            int endHorizontal,
-            int endDepth)
+        [InlineData(0)]
+        [InlineData(5)]
+        public void Start_with_aim_indicated(
+            int aimValue
+        )
+
         {
             // Given
-            var expectedPosition = new Position(endHorizontal, endDepth);
-            var submarine = new Submarine(startHorizontal, startDepth);
+            var expectedAim = new Aim(0);
+            var submarine = new Submarine(expectedAim);
 
             // When
-            submarine.Execute(new DownCommand(commandUnit));
+            var actualAim = submarine.Aim;
 
             // Then
-            var actualPosition = submarine.Position;
-            actualPosition.Should().Be(expectedPosition);
+            actualAim.Should().Be(expectedAim);
         }
-
-        [Theory]
-        [InlineData(8, 5, 3, 8, 2)]
-        public void Decreases_the_depth_position_by_number_of_unit_from_up_command(
-            int startHorizontal,
-            int startDepth,
-            int commandUnit,
-            int endHorizontal,
-            int endDepth)
-        {
-            // Given
-            var expectedPosition = new Position(endHorizontal, endDepth);
-            var submarine = new Submarine(startHorizontal, startDepth);
-
-            // When
-            submarine.Execute(new UpCommand(commandUnit));
-
-            // Then
-            var actualPosition = submarine.Position;
-            actualPosition.Should().Be(expectedPosition);
-        }
-    }
-
-
-    public abstract record SubmarineCommand(int Unit)
-    {
-        public abstract Position ExecuteFor(Position position);
-    }
-
-    public record UpCommand(int Unit) : SubmarineCommand(Unit)
-    {
-        public override Position ExecuteFor(Position position)
-            => position with { Depth = position.Depth - Unit };
-    }
-
-    public record DownCommand(int Unit) : SubmarineCommand(Unit)
-    {
-        public override Position ExecuteFor(Position position)
-            => position with { Depth = position.Depth + Unit };
-    }
-
-    public record ForwardCommand(int Unit) : SubmarineCommand(Unit)
-    {
-        public override Position ExecuteFor(Position position)
-            => position with { Horizontal = position.Horizontal + Unit };
     }
 
     public class Submarine
     {
-        public Submarine(int horizontal, int depth)
-            => Position = new Position(horizontal, depth);
-
-        public Submarine() : this(0, 0)
+        public Submarine()
+            : this(0, 0, new Aim(0))
         {
         }
+
+        public Submarine(int horizontal, int depth)
+            : this(horizontal, depth, new Aim(0))
+        {
+        }
+
+
+        public Submarine(Aim aim)
+            : this(0, 0, aim)
+        {
+        }
+
+        public Submarine(int horizontal, int depth, Aim aim)
+        {
+            Position = new Position(horizontal, depth);
+            Aim = aim;
+        }
+
+        public Aim Aim { get; }
 
         public Position Position { get; private set; }
 
         public void Execute(SubmarineCommand command)
             => Position = command.ExecuteFor(Position);
     }
+
+    public record Aim(int Value);
 
     public record Position(int Horizontal, int Depth);
 }
