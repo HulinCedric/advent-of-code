@@ -55,13 +55,10 @@ namespace AdventOfCode.Day02
         [Theory]
         [InlineData(0)]
         [InlineData(5)]
-        public void Start_with_aim_indicated(
-            int aimValue
-        )
-
+        public void Start_with_aim_indicated(int aimValue)
         {
             // Given
-            var expectedAim = new Aim(0);
+            var expectedAim = new Aim(aimValue);
             var submarine = new Submarine(expectedAim);
 
             // When
@@ -96,12 +93,15 @@ namespace AdventOfCode.Day02
             Aim = aim;
         }
 
-        public Aim Aim { get; }
+        public Aim Aim { get; set; }
 
         public Position Position { get; private set; }
 
         public void Execute(SubmarineCommand command)
             => Position = command.ExecuteFor(Position);
+
+        public void Execute(SubmarineAimCommand command)
+            => (Position, Aim) = command.ExecuteFor(this);
     }
 
     public record Aim(int Value);
