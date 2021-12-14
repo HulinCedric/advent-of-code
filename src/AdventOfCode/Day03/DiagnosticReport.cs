@@ -12,20 +12,24 @@ public class DiagnosticReport
     public DiagnosticReport(string diagnosticReportRepresentation)
         => this.diagnosticReportRepresentation = diagnosticReportRepresentation;
 
+    public int Co2ScrubberRating
+        => GenerateRating(LeastCommonBit);
+
     public int EpsilonRate
         => GenerateRate(LeastCommonBit);
 
     public int GamaRate
         => GenerateRate(MostCommonBit);
 
+    public int LifeSupportRating
+        => OxygenGeneratorRating * Co2ScrubberRating;
+
+    public int OxygenGeneratorRating
+        => GenerateRating(MostCommonBit);
+
     public int PowerConsumption
         => GamaRate * EpsilonRate;
 
-    private static char MostCommonBit(string bitsAtIndex)
-        => bitsAtIndex.GroupBy(bit => bit).MaxBy(bit => bit.Count())!.Key;
-
-    private static char LeastCommonBit(string bitsAtIndex)
-        => bitsAtIndex.GroupBy(bit => bit).MinBy(bit => bit.Count())!.Key;
 
     private int GenerateRate(Func<string, char> rateCommonBitStrategy)
     {
@@ -51,4 +55,65 @@ public class DiagnosticReport
 
         return Convert.ToInt32(binaryRate.ToString(), 2);
     }
+
+    private int GenerateRating(
+        Func<IGrouping<char, (string binaryNumber, char bitAtIndex)>,
+            IGrouping<char, (string binaryNumber, char bitAtIndex)>,
+            IGrouping<char, (string binaryNumber, char bitAtIndex)>[],
+            IGrouping<char, (string binaryNumber, char bitAtIndex)>> ratingCommonBitGroupSelectionStrategy)
+    {
+        string[] ExtractBinaryNumbers()
+            => diagnosticReportRepresentation.Split("\n");
+
+        char BitAtIndex(string binaryNumber, int index)
+            => binaryNumber[index];
+
+        var binaryNumbers = ExtractBinaryNumbers();
+        var binaryNumberLength = binaryNumbers.First().Length;
+
+        for (var index = 0; index < binaryNumberLength && binaryNumbers.Length > 1; index++)
+        {
+            var binaryNumbersWithBitAtIndex = binaryNumbers
+                .Select(binaryNumber => (binaryNumber, bitAtIndex: BitAtIndex(binaryNumber, index)))
+                .ToArray();
+
+            var binaryNumbersGroupedByBitAtIndex = binaryNumbersWithBitAtIndex
+                .GroupBy(tuple => tuple.bitAtIndex)
+                .ToArray();
+
+            var mostCommonBitGroup = binaryNumbersGroupedByBitAtIndex.MaxBy(x => x.Count())!;
+            var leastCommonBitGroup = binaryNumbersGroupedByBitAtIndex.MinBy(x => x.Count())!;
+
+            var selectedGroup = ratingCommonBitGroupSelectionStrategy(
+                mostCommonBitGroup,
+                leastCommonBitGroup,
+                binaryNumbersGroupedByBitAtIndex);
+
+            binaryNumbers = selectedGroup.Select(m => m.binaryNumber).ToArray();
+        }
+
+        return Convert.ToInt32(binaryNumbers.First(), 2);
+    }
+
+    private static char MostCommonBit(string bitsAtIndex)
+        => bitsAtIndex.GroupBy(bit => bit).MaxBy(bit => bit.Count())!.Key;
+
+    private static char LeastCommonBit(string bitsAtIndex)
+        => bitsAtIndex.GroupBy(bit => bit).MinBy(bit => bit.Count())!.Key;
+
+    private static IGrouping<char, (string binaryNumber, char bitAtIndex)> LeastCommonBit(
+        IGrouping<char, (string binaryNumber, char bitAtIndex)> mostCommonBitGroup,
+        IGrouping<char, (string binaryNumber, char bitAtIndex)> leastCommonBitGroup,
+        IGrouping<char, (string binaryNumber, char bitAtIndex)>[] binaryNumberGroupByBitAtIndex)
+        => mostCommonBitGroup.Count() != leastCommonBitGroup.Count()
+               ? leastCommonBitGroup
+               : binaryNumberGroupByBitAtIndex.First(x => x.Key == '0');
+
+    private static IGrouping<char, (string binaryNumber, char bitAtIndex)> MostCommonBit(
+        IGrouping<char, (string binaryNumber, char bitAtIndex)> mostCommonBitGroup,
+        IGrouping<char, (string binaryNumber, char bitAtIndex)> leastCommonBitGroup,
+        IGrouping<char, (string binaryNumber, char bitAtIndex)>[] binaryNumberGroupByBitAtIndex)
+        => mostCommonBitGroup.Count() != leastCommonBitGroup.Count()
+               ? mostCommonBitGroup
+               : binaryNumberGroupByBitAtIndex.First(x => x.Key == '1');
 }
