@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -100,87 +97,6 @@ namespace AdventOfCode.Day04
             // Then
             hasWon.Should().BeTrue();
             winningScore.Should().Be(expectedWinningScore);
-        }
-    }
-
-    public static class BingoBoardFactory
-    {
-        public static BingoBoard CreateWithRepresentation(string boardRepresentation)
-            => new(
-                boardRepresentation
-                    .Split("\n")
-                    .Select(
-                        row => row
-                            .Split(" ", StringSplitOptions.RemoveEmptyEntries)
-                            .Select(int.Parse)
-                            .ToArray()));
-    }
-
-    public class BingoBoard
-    {
-        private readonly BoardNumber[][] numbers;
-        private int? numberPermitToWin;
-
-        public BingoBoard(IEnumerable<int[]> numbers)
-            => this.numbers = numbers
-                   .Select(rowNumbers => rowNumbers.Select(number => new BoardNumber(number)).ToArray())
-                   .ToArray();
-
-        public bool HasNotWon
-            => !HasWon;
-
-        public bool HasWon
-            => ContainWinningSet(NumbersByRow) || ContainWinningSet(NumbersByColumn);
-
-        public IEnumerable<int> MarkedNumbers
-            => numbers.SelectMany(rowNumbers => rowNumbers)
-                .Where(number => number.IsMarked)
-                .Select(number => number.Value);
-
-        private IEnumerable<IEnumerable<BoardNumber>> NumbersByColumn
-            => numbers.SelectMany(
-                    (rowNumbers, rowIndex) => rowNumbers
-                        .Select((number, columnIndex) => new { number, columnIndex, rowIndex }))
-                .GroupBy(flatten => flatten.columnIndex)
-                .Select(
-                    numbersGroupedByColumn => numbersGroupedByColumn
-                        .Select(flatten => flatten.number));
-
-        private IEnumerable<IEnumerable<BoardNumber>> NumbersByRow
-            => numbers;
-
-        public int WinningScore
-            => numberPermitToWin.HasValue ? ComputeWinningScore(numberPermitToWin.Value) : 0;
-
-        private int ComputeWinningScore(int winNumber)
-        {
-            var sumOfUnmarkedNumbers = numbers.SelectMany(rowNumbers => rowNumbers)
-                .Where(number => number.IsUnmarked)
-                .Sum(number => number.Value);
-
-            return sumOfUnmarkedNumbers * winNumber;
-        }
-
-        private bool ContainWinningSet(IEnumerable<IEnumerable<BoardNumber>> numberSet)
-            => numberSet.Any(rowNumbers => rowNumbers.All(number => number.IsMarked));
-
-        public void Mark(int drawNumber)
-        {
-            foreach (var rowNumbers in numbers)
-            foreach (var number in rowNumbers)
-                if (number.Value == drawNumber)
-                    number.IsMarked = true;
-
-            if (HasWon && !numberPermitToWin.HasValue)
-                numberPermitToWin = drawNumber;
-        }
-
-        private record BoardNumber(int Value)
-        {
-            internal bool IsMarked { get; set; }
-
-            internal bool IsUnmarked
-                => !IsMarked;
         }
     }
 }
