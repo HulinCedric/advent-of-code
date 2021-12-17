@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -15,14 +17,54 @@ namespace AdventOfCode.Day05
             int expectedOverlap)
         {
             // Given
-       
+            var lineOfVents =
+                LineOfVentsFactory.CreateForRepresentation(nearbyLinesOfVentsRepresentation);
 
             // When
-         
+            var actualOverlapCount = lineOfVents.OverlapCount;
 
             // Then
-            expectedOverlap.Should().Be(expectedOverlap);
+            actualOverlapCount.Should().Be(expectedOverlap);
         }
+    }
 
+    public record LineOfVent(Coordinate C1, Coordinate C2)
+    {
+    }
+
+    public record Coordinate(int X, int Y)
+    {
+    }
+
+    public abstract class LineOfVentsFactory
+    {
+        public static LineOfVents CreateForRepresentation(string nearbyLinesOfVentsRepresentation)
+            => new(
+                nearbyLinesOfVentsRepresentation.Split("\n")
+                    .Select(
+                        lineRepresentation =>
+                        {
+                            var coordinates = lineRepresentation.Split(" -> ")
+                                .Select(
+                                    coordinateRepresentation =>
+                                    {
+                                        var coordinatePoint = coordinateRepresentation.Split(",")
+                                            .Select(int.Parse);
+                                        return new Coordinate(coordinatePoint.First(), coordinatePoint.Last());
+                                    });
+                            return new LineOfVent(coordinates.First(), coordinates.Last());
+                        })
+                    .ToList());
+    }
+
+    public class LineOfVents
+    {
+        private readonly List<LineOfVent> lines;
+
+        public LineOfVents(List<LineOfVent> lines)
+            => this.lines = lines;
+
+        public int OverlapCount
+            => 0;
     }
 }
