@@ -1,39 +1,46 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode.Day06;
 
-public class Lanternfishs : IEnumerable<Lanternfish>
+public class Lanternfishs
 {
-    private readonly List<Lanternfish> lanternfishs;
-    public int CurrentDay = 1;
+    private const int InternalTimerMinimumLimit = 0;
+    private const int InternalTimerWhenReset = 6;
+    private const int InternalTimerForNewOnes = 8;
 
-    public Lanternfishs(params Lanternfish[] lanternfishs)
-        => this.lanternfishs = lanternfishs.ToList();
+    private readonly long[] internalTimersCounts = new long[9];
 
-    public IEnumerator<Lanternfish> GetEnumerator()
-        => lanternfishs.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator()
-        => ((IEnumerable)lanternfishs).GetEnumerator();
-
-    public LanternfishsDaySummary PassADay()
+    public Lanternfishs(params int[] lanternfishInternalTimers)
     {
-        var lanternfishsDaySummary = new LanternfishsDaySummary(
-            CurrentDay,
-            lanternfishs
-                .Select(lanternfish => lanternfish.PassADay())
-                .ToArray());
+        foreach (var lanternfishInternalTimer in lanternfishInternalTimers)
+            internalTimersCounts[lanternfishInternalTimer]++;
 
-        lanternfishs.AddRange(
-            lanternfishsDaySummary.DaySummaries
-                .Select(summary => summary.LanternfishCreated)
-                .Where(lanternfishCreated => lanternfishCreated is not null)
-                .Cast<Lanternfish>());
+        CurrentDay = 1;
+    }
+
+    public int CurrentDay { get; private set; }
+
+    public int[] InternalTimers
+        => internalTimersCounts
+            .Select((lanternfishCount, internalTimer) => (lanternfishCount, internalTimer))
+            .Where(x => x.lanternfishCount != default)
+            .Select(x => x.internalTimer)
+            .ToArray();
+
+    public void PassADay()
+    {
+        var createdLanternfishCount = internalTimersCounts[InternalTimerMinimumLimit];
+
+        for (var i = 1; i < internalTimersCounts.Length; i++)
+            internalTimersCounts[i - 1] = internalTimersCounts[i];
+
+        internalTimersCounts[InternalTimerForNewOnes] = createdLanternfishCount;
+
+        internalTimersCounts[InternalTimerWhenReset] += createdLanternfishCount;
 
         CurrentDay++;
-
-        return lanternfishsDaySummary;
     }
+
+    public long Count()
+        => internalTimersCounts.Sum();
 }

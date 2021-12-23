@@ -7,17 +7,16 @@ namespace AdventOfCode.Day06;
 public class LanternfishShould
 {
     [Theory]
-    [InlineData("3,4,3,1,2", 5934)]
-    [InputFileData("Day06/input.txt", 352195)]
+    [InlineData("3,4,3,1,2", 5934L)]
+    [InputFileData("Day06/input.txt", 352195L)]
     public void How_many_lanternfish_would_there_be_after_80_days(
         string lanternfishInternalTimerValues,
-        int expectedLanternfishCount)
+        long expectedLanternfishCount)
     {
         // Given
         var lanternfishs = new Lanternfishs(
             lanternfishInternalTimerValues.Split(",")
                 .Select(int.Parse)
-                .Select(lanternfishInternalTimerValue => new Lanternfish(lanternfishInternalTimerValue))
                 .ToArray());
 
         // When
@@ -26,6 +25,28 @@ public class LanternfishShould
 
         // Then
         lanternfishs.CurrentDay.Should().Be(81);
+        lanternfishs.Count().Should().Be(expectedLanternfishCount);
+    }
+
+    [Theory]
+    [InlineData("3,4,3,1,2", 26984457539L)]
+    [InputFileData("Day06/input.txt", 1600306001288L)]
+    public void How_many_lanternfish_would_there_be_after_256_days(
+        string lanternfishInternalTimerValues,
+        long expectedLanternfishCount)
+    {
+        // Given
+        var lanternfishs = new Lanternfishs(
+            lanternfishInternalTimerValues.Split(",")
+                .Select(int.Parse)
+                .ToArray());
+
+        // When
+        while (lanternfishs.CurrentDay < 257)
+            lanternfishs.PassADay();
+
+        // Then
+        lanternfishs.CurrentDay.Should().Be(257);
         lanternfishs.Count().Should().Be(expectedLanternfishCount);
     }
 
@@ -44,43 +65,53 @@ public class LanternfishShould
         int expectedInternalValue)
     {
         // Given
-        var expectedDaySummary = new LanternfishDaySummary(expectedInternalValue, null);
-        var lanternfish = new Lanternfish(internalTimerValue);
+        var lanternfishs = new Lanternfishs(internalTimerValue);
 
         // When
-        var daySummary = lanternfish.PassADay();
+        lanternfishs.PassADay();
 
         // Then
-        daySummary.Should().Be(expectedDaySummary);
+        lanternfishs.InternalTimers.First().Should().Be(expectedInternalValue);
     }
 
     [Fact]
     public void Increase_internal_timer_to_6_when_a_day_pass_and_its_value_is_0()
     {
         // Given
-        const int expectedInternalValue = 6;
-        var expectedDaySummary = new LanternfishDaySummary(expectedInternalValue, new Lanternfish(8));
-        var lanternfish = new Lanternfish(0);
+        var lanternfishs = new Lanternfishs(0);
 
         // When
-        var daySummary = lanternfish.PassADay();
+        lanternfishs.PassADay();
 
         // Then
-        daySummary.Should().Be(expectedDaySummary);
+        lanternfishs.InternalTimers.First().Should().Be(6);
     }
 
     [Fact]
     public void Give_a_new_lanternfish_with_internal_value_of_8_when_a_day_pass_and_its_value_is_0()
     {
         // Given
-        const int expectedInternalValue = 6;
-        var expectedDaySummary = new LanternfishDaySummary(expectedInternalValue, new Lanternfish(8));
-        var lanternfish = new Lanternfish(0);
+        var lanternfishs = new Lanternfishs(0);
 
         // When
-        var daySummary = lanternfish.PassADay();
+        lanternfishs.PassADay();
 
         // Then
-        daySummary.Should().Be(expectedDaySummary);
+        lanternfishs.Count().Should().Be(2);
+
+        lanternfishs.InternalTimers.Should().BeEquivalentTo(new[] { 6, 8 });
+    }
+
+    [Fact]
+    public void Pass_a_day_for_all_lanternfish()
+    {
+        // Given
+        var lanternfishs = new Lanternfishs(2, 4);
+
+        // When
+        lanternfishs.PassADay();
+
+        // Then
+        lanternfishs.InternalTimers.Should().BeEquivalentTo(new[] { 1, 3 });
     }
 }
