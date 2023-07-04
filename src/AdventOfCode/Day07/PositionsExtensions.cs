@@ -18,4 +18,27 @@ public static class PositionsExtensions
 
         return totalFuelCost;
     }
+
+    public static long GetCheapestTotalFuelCost2(int[] crabPositions)
+        => GetMapPositions(crabPositions)
+            .Select(position => crabPositions.GetTotalFuelCostAt(position))
+            .Min();
+
+    private static IEnumerable<int> GetMapPositions(int[] crabPositions)
+    {
+        for (var position = crabPositions.Min(); position <= crabPositions.Max(); position++)
+            yield return position;
+    }
+
+    private static int GetTotalFuelCostAt(this int[] crabPositions, int mapPosition)
+        => crabPositions
+            .Select(crabPosition => GetDistance(mapPosition, crabPosition))
+            .Select(distance => GetFuelCost(distance))
+            .Sum();
+
+    private static int GetFuelCost(int distance)
+        => distance * (distance + 1) / 2;
+
+    private static int GetDistance(int position, int item)
+        => Math.Abs(item - position);
 }

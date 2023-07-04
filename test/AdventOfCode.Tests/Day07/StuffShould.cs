@@ -25,7 +25,23 @@ public class StuffShould
         actualTotalFuelCost.Should().Be(expectedTotalFuelCost);
     }
 
-  
+    [Theory]
+    [InlineData("16,1,2,0,4,2,7,1,2,14", 168L)]
+    [InputFileData("Day07/input.txt", 96987874L)]
+    public void How_much_fuel_must_they_spend_to_align_to_that_position_2(
+        string positionsDescription,
+        long expectedTotalFuelCost)
+    {
+        // Given
+        var positions = ToPositions(positionsDescription);
+
+        // When
+        var actualTotalFuelCost = PositionsExtensions.GetCheapestTotalFuelCost2(positions);
+
+        // Then
+        actualTotalFuelCost.Should().Be(expectedTotalFuelCost);
+    }
+    
     [Theory]
     [InlineData("16,1,2,0,4,2,7,1,2,14", 2)]
     public void Horizontal_position_that_the_crabs_can_align_to_using_the_least_fuel_possible(
@@ -41,8 +57,7 @@ public class StuffShould
         // Then
         actualChosePosition.Should().Be(expectedChosePosition);
     }
-    
-    private static IEnumerable<int> ToPositions(string positionsDescription)
-        => positionsDescription.Split(",").Select(int.Parse);
 
+    private static int[] ToPositions(string positionsDescription)
+        => positionsDescription.Split(",").Select(int.Parse).ToArray();
 }
