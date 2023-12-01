@@ -1,3 +1,4 @@
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -27,9 +28,9 @@ public class TrebuchetTest
         int expectedCalibrationValue)
     {
         // Given
-        var firstDigit = "1";
+        var firstDigit = calibrationValueAmended.First(char.IsDigit);
         var secondDigit = "2";
-        
+
         // When
         var calibrationValue = int.Parse(firstDigit + secondDigit);
 
