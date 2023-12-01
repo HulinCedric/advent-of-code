@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -20,5 +18,20 @@ public class TrebuchetTest
 
         // Then
         sumOfCalibrationValues.Should().Be(expectedSumOfCalibrationValues);
+    }
+
+    [Theory]
+    [InlineData("1abc2", 12)]
+    public void Found_calibration_value(
+        string calibrationValueAmended,
+        int expectedCalibrationValue)
+    {
+        // Given
+
+        // When
+        var calibrationValue = 12;
+
+        // Then
+        calibrationValue.Should().Be(expectedCalibrationValue);
     }
 }
