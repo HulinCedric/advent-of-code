@@ -1,2 +1,2 @@
-# advent-of-code-2021
-Advent of Code 2021 challenge
+# advent-of-code
+Advent of Code challenge
