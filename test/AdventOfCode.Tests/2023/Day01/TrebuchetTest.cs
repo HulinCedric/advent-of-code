@@ -27,9 +27,11 @@ public class TrebuchetTest
         int expectedCalibrationValue)
     {
         // Given
-
+        var firstDigit = "1";
+        var secondDigit = "2";
+        
         // When
-        var calibrationValue = 12;
+        var calibrationValue = int.Parse(firstDigit + secondDigit);
 
         // Then
         calibrationValue.Should().Be(expectedCalibrationValue);
