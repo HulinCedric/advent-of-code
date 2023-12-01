@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using Xunit;
 
@@ -23,6 +24,23 @@ public class TrebuchetTest
         // Then
         sumOfCalibrationValues.Should().Be(expectedSumOfCalibrationValues);
     }
+    
+    [Theory]
+    [InlineData("two1nine\neightwothree\nabcone2threexyz\nxtwone3four\n4nineeightseven2\nzoneight234\n7pqrstsixteen", 281)]
+    [InputFileData("2023/Day01/input.txt", 54878)]
+    public void What_is_the_sum_of_all_of_the_calibration_values_with_spelled_out_digit(
+        string calibrationDocument,
+        int expectedSumOfCalibrationValues)
+    {
+        // Given
+        var calibrationValuesAmended = calibrationDocument.Split("\n");
+
+        // When
+        var sumOfCalibrationValues = calibrationValuesAmended.Select(FindCalibrationValueWithSpelledOutDigit).Sum();
+
+        // Then
+        sumOfCalibrationValues.Should().Be(expectedSumOfCalibrationValues);
+    }
 
     [Theory]
     [InlineData("1abc2", 12)]
@@ -41,30 +59,46 @@ public class TrebuchetTest
     }
 
     [Theory]
-    [InlineData("one", "1")]
-    [InlineData("two", "2")]
-    [InlineData("three", "3")]
-    [InlineData("four", "4")]
-    [InlineData("five", "5")]
-    [InlineData("six", "6")]
-    [InlineData("seven", "7")]
-    [InlineData("eight", "8")]
-    [InlineData("nine", "9")]
-    [InlineData("unknown", "unknown")]
-    public void Translate_spelled_out_digit(
+    [InlineData("two1nine", 29)]
+    [InlineData("eightwothree", 83)]
+    [InlineData("abcone2threexyz", 13)]
+    [InlineData("xtwone3four", 24)]
+    [InlineData("4nineeightseven2", 42)]
+    [InlineData("zoneight234", 14)]
+    [InlineData("7pqrstsixteen", 76)]
+    public void Find_calibration_value_with_spelled_out_digit(
         string calibrationValueAmended,
-        string expectedCalibrationValue)
+        int expectedCalibrationValue)
     {
         // When
-        var digit = TranslateSpelledOutDigitToDigit(calibrationValueAmended);
+        var calibrationValue = FindCalibrationValueWithSpelledOutDigit(calibrationValueAmended);
 
         // Then
-        digit.Should().Be(expectedCalibrationValue);
+        calibrationValue.Should().Be(expectedCalibrationValue);
     }
 
-    private static string TranslateSpelledOutDigitToDigit(string calibrationValueAmended)
+    [Theory]
+    [InlineData("two1nine", "219")]
+    [InlineData("eightwothree", "8wo3")]
+    [InlineData("abcone2threexyz", "abc123xyz")]
+    [InlineData("xtwone3four", "x2ne34")]
+    [InlineData("4nineeightseven2", "49872")]
+    [InlineData("zoneight234", "z1ight234")]
+    [InlineData("7pqrstsixteen", "7pqrst6teen")]
+    public void Replace_spelled_out_digit_in_calibration_value_amended(
+        string calibrationValueAmended,
+        string expectedCalibrationValueAmended)
     {
-        var spelledOutDigits = new Dictionary<string, string>
+        // When
+        var newCalibrationValueAmended = ReplaceSpelledOutDigit(calibrationValueAmended);
+
+        // Then
+        newCalibrationValueAmended.Should().Be(expectedCalibrationValueAmended);
+    }
+
+    private static string ReplaceSpelledOutDigit(string calibrationValueAmended)
+    {
+        var spelledOutDigitTranslation = new Dictionary<string, string>
         {
             { "one", "1" },
             { "two", "2" },
@@ -74,10 +108,22 @@ public class TrebuchetTest
             { "six", "6" },
             { "seven", "7" },
             { "eight", "8" },
-            { "nine", "9" },
+            { "nine", "9" }
         };
-        
-        return spelledOutDigits.GetValueOrDefault(calibrationValueAmended, calibrationValueAmended);
+
+        const string pattern = "(one|two|three|four|five|six|seven|eight|nine)";
+
+        return Regex.Replace(
+            calibrationValueAmended,
+            pattern,
+            match => spelledOutDigitTranslation[match.Value]);
+    }
+
+    private static int FindCalibrationValueWithSpelledOutDigit(string calibrationValueAmended)
+    {
+        calibrationValueAmended = ReplaceSpelledOutDigit(calibrationValueAmended);
+
+        return FindCalibrationValue(calibrationValueAmended);
     }
 
     private static int FindCalibrationValue(string calibrationValueAmended)
