@@ -30,14 +30,18 @@ public class TrebuchetTest
         string calibrationValueAmended,
         int expectedCalibrationValue)
     {
-        // Given
-        var firstDigit = calibrationValueAmended.First(char.IsDigit);
-        var secondDigit = calibrationValueAmended.Last(char.IsDigit);
-
         // When
-        var calibrationValue = int.Parse(string.Concat(firstDigit, secondDigit));
+        var calibrationValue = FoundCalibrationValue(calibrationValueAmended);
 
         // Then
         calibrationValue.Should().Be(expectedCalibrationValue);
+    }
+
+    private static int FoundCalibrationValue(string calibrationValueAmended)
+    {
+        var firstDigit = calibrationValueAmended.First(char.IsDigit);
+        var secondDigit = calibrationValueAmended.Last(char.IsDigit);
+
+        return int.Parse(string.Concat(firstDigit, secondDigit));
     }
 }
