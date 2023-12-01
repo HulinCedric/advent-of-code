@@ -23,16 +23,19 @@ public class TrebuchetTest
 
     [Theory]
     [InlineData("1abc2", 12)]
+    [InlineData("npqr3stu8vwx", 38)]
+    [InlineData("a1b2c3d4e5f", 15)]
+    [InlineData("ntreb7uchet", 77)]
     public void Found_calibration_value(
         string calibrationValueAmended,
         int expectedCalibrationValue)
     {
         // Given
         var firstDigit = calibrationValueAmended.First(char.IsDigit);
-        var secondDigit = "2";
+        var secondDigit = calibrationValueAmended.Last(char.IsDigit);
 
         // When
-        var calibrationValue = int.Parse(firstDigit + secondDigit);
+        var calibrationValue = int.Parse(string.Concat(firstDigit, secondDigit));
 
         // Then
         calibrationValue.Should().Be(expectedCalibrationValue);
