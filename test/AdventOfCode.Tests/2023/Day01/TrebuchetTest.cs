@@ -105,15 +105,7 @@ public class TrebuchetTest
         var accumulator = "";
         for (var i = 0; i < calibrationValueAmended.Length; i++)
         {
-            var currentCharacter = calibrationValueAmended[i];
-            if (char.IsDigit(currentCharacter))
-            {
-                firstDigit = currentCharacter.ToString();
-                break;
-            }
-
-            accumulator += currentCharacter;
-
+            accumulator = accumulator + calibrationValueAmended[i];
 
             accumulator = ReplaceSpelledOutDigit(accumulator);
 
@@ -125,21 +117,15 @@ public class TrebuchetTest
         }
 
 
+        
+        // Reverse calibrationValueAmended and use reversed spelledOutDigitTranslation
         var lastDigit = "";
 
         accumulator = "";
 
         for (var i = calibrationValueAmended.Length - 1; i >= 0; i--)
         {
-            var currentCharacter = calibrationValueAmended[i];
-            if (char.IsDigit(currentCharacter))
-            {
-                lastDigit = currentCharacter.ToString();
-                break;
-            }
-
-            accumulator = currentCharacter + accumulator;
-
+            accumulator = calibrationValueAmended[i] + accumulator;
 
             accumulator = ReplaceSpelledOutDigit(accumulator);
 
