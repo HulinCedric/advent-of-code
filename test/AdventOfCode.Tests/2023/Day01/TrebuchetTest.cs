@@ -24,10 +24,12 @@ public class TrebuchetTest
         // Then
         sumOfCalibrationValues.Should().Be(expectedSumOfCalibrationValues);
     }
-    
+
     [Theory]
-    [InlineData("two1nine\neightwothree\nabcone2threexyz\nxtwone3four\n4nineeightseven2\nzoneight234\n7pqrstsixteen", 281)]
-    [InputFileData("2023/Day01/input.txt", 54878)]
+    [InlineData(
+        "two1nine\neightwothree\nabcone2threexyz\nxtwone3four\n4nineeightseven2\nzoneight234\n7pqrstsixteen",
+        281)]
+    [InputFileData("2023/Day01/input.txt", 54885)]
     public void What_is_the_sum_of_all_of_the_calibration_values_with_spelled_out_digit(
         string calibrationDocument,
         int expectedSumOfCalibrationValues)
@@ -96,6 +98,61 @@ public class TrebuchetTest
         newCalibrationValueAmended.Should().Be(expectedCalibrationValueAmended);
     }
 
+    private static int FindCalibrationValueWithSpelledOutDigit(string calibrationValueAmended)
+    {
+        var firstDigit = "";
+
+        var accumulator = "";
+        for (var i = 0; i < calibrationValueAmended.Length; i++)
+        {
+            var currentCharacter = calibrationValueAmended[i];
+            if (char.IsDigit(currentCharacter))
+            {
+                firstDigit = currentCharacter.ToString();
+                break;
+            }
+
+            accumulator += currentCharacter;
+
+
+            accumulator = ReplaceSpelledOutDigit(accumulator);
+
+            if (accumulator.Any(char.IsDigit))
+            {
+                firstDigit = accumulator.First(char.IsDigit).ToString();
+                break;
+            }
+        }
+
+
+        var lastDigit = "";
+
+        accumulator = "";
+
+        for (var i = calibrationValueAmended.Length - 1; i >= 0; i--)
+        {
+            var currentCharacter = calibrationValueAmended[i];
+            if (char.IsDigit(currentCharacter))
+            {
+                lastDigit = currentCharacter.ToString();
+                break;
+            }
+
+            accumulator = currentCharacter + accumulator;
+
+
+            accumulator = ReplaceSpelledOutDigit(accumulator);
+
+            if (accumulator.Any(char.IsDigit))
+            {
+                lastDigit = accumulator.Last(char.IsDigit).ToString();
+                break;
+            }
+        }
+
+        return int.Parse(string.Concat(firstDigit, lastDigit));
+    }
+
     private static string ReplaceSpelledOutDigit(string calibrationValueAmended)
     {
         var spelledOutDigitTranslation = new Dictionary<string, string>
@@ -117,13 +174,6 @@ public class TrebuchetTest
             calibrationValueAmended,
             pattern,
             match => spelledOutDigitTranslation[match.Value]);
-    }
-
-    private static int FindCalibrationValueWithSpelledOutDigit(string calibrationValueAmended)
-    {
-        calibrationValueAmended = ReplaceSpelledOutDigit(calibrationValueAmended);
-
-        return FindCalibrationValue(calibrationValueAmended);
     }
 
     private static int FindCalibrationValue(string calibrationValueAmended)
