@@ -17,7 +17,7 @@ public class TrebuchetTest
         var calibrationValuesAmended = calibrationDocument.Split("\n");
 
         // When
-        var sumOfCalibrationValues = calibrationValuesAmended.Select(FoundCalibrationValue).Sum();
+        var sumOfCalibrationValues = calibrationValuesAmended.Select(FindCalibrationValue).Sum();
 
         // Then
         sumOfCalibrationValues.Should().Be(expectedSumOfCalibrationValues);
@@ -28,18 +28,31 @@ public class TrebuchetTest
     [InlineData("npqr3stu8vwx", 38)]
     [InlineData("a1b2c3d4e5f", 15)]
     [InlineData("ntreb7uchet", 77)]
-    public void Found_calibration_value(
+    public void Find_calibration_value_with_digit(
         string calibrationValueAmended,
         int expectedCalibrationValue)
     {
         // When
-        var calibrationValue = FoundCalibrationValue(calibrationValueAmended);
+        var calibrationValue = FindCalibrationValue(calibrationValueAmended);
 
         // Then
         calibrationValue.Should().Be(expectedCalibrationValue);
     }
+    
+    [Theory]
+    [InlineData("one", 1)]
+    public void Find_spelled_out_digit(
+        string calibrationValueAmended,
+        int expectedCalibrationValue)
+    {
+        // When
+        var digit = 1;
 
-    private static int FoundCalibrationValue(string calibrationValueAmended)
+        // Then
+        digit.Should().Be(expectedCalibrationValue);
+    }
+
+    private static int FindCalibrationValue(string calibrationValueAmended)
     {
         var firstDigit = calibrationValueAmended.First(char.IsDigit);
         var lastDigit = calibrationValueAmended.Last(char.IsDigit);
