@@ -13,9 +13,10 @@ public class TrebuchetTest
         int expectedSumOfCalibrationValues)
     {
         // Given
+        var calibrationValuesAmended = calibrationDocument.Split("\n");
 
         // When
-        var sumOfCalibrationValues = 142;
+        var sumOfCalibrationValues = calibrationValuesAmended.Select(FoundCalibrationValue).Sum();
 
         // Then
         sumOfCalibrationValues.Should().Be(expectedSumOfCalibrationValues);
