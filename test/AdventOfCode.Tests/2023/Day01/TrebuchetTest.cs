@@ -39,40 +39,45 @@ public class TrebuchetTest
         // Then
         calibrationValue.Should().Be(expectedCalibrationValue);
     }
-    
+
     [Theory]
-    [InlineData("one", 1)]
-    [InlineData("two", 2)]
-    [InlineData("three", 3)]
-    [InlineData("four", 4)]
-    [InlineData("five", 5)]
-    [InlineData("six", 6)]
-    [InlineData("seven", 7)]
-    [InlineData("eight", 8)]
-    [InlineData("nine", 9)]
-    public void Find_spelled_out_digit(
+    [InlineData("one", "1")]
+    [InlineData("two", "2")]
+    [InlineData("three", "3")]
+    [InlineData("four", "4")]
+    [InlineData("five", "5")]
+    [InlineData("six", "6")]
+    [InlineData("seven", "7")]
+    [InlineData("eight", "8")]
+    [InlineData("nine", "9")]
+    [InlineData("unknown", "unknown")]
+    public void Translate_spelled_out_digit(
         string calibrationValueAmended,
-        int expectedCalibrationValue)
+        string expectedCalibrationValue)
     {
-        // Given
-        var spelledOutDigits = new Dictionary<string, int>
-        {
-            {"one", 1},
-            {"two", 2},
-            {"three", 3},
-            {"four", 4},
-            {"five", 5},
-            {"six", 6},
-            {"seven", 7},
-            {"eight", 8},
-            {"nine", 9}
-        };        
-        
         // When
-        var digit = spelledOutDigits[calibrationValueAmended];
+        var digit = TranslateSpelledOutDigitToDigit(calibrationValueAmended);
 
         // Then
         digit.Should().Be(expectedCalibrationValue);
+    }
+
+    private static string TranslateSpelledOutDigitToDigit(string calibrationValueAmended)
+    {
+        var spelledOutDigits = new Dictionary<string, string>
+        {
+            { "one", "1" },
+            { "two", "2" },
+            { "three", "3" },
+            { "four", "4" },
+            { "five", "5" },
+            { "six", "6" },
+            { "seven", "7" },
+            { "eight", "8" },
+            { "nine", "9" },
+        };
+        
+        return spelledOutDigits.GetValueOrDefault(calibrationValueAmended, calibrationValueAmended);
     }
 
     private static int FindCalibrationValue(string calibrationValueAmended)
