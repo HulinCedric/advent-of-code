@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Xunit;
@@ -41,12 +42,34 @@ public class TrebuchetTest
     
     [Theory]
     [InlineData("one", 1)]
+    [InlineData("two", 2)]
+    [InlineData("three", 3)]
+    [InlineData("four", 4)]
+    [InlineData("five", 5)]
+    [InlineData("six", 6)]
+    [InlineData("seven", 7)]
+    [InlineData("eight", 8)]
+    [InlineData("nine", 9)]
     public void Find_spelled_out_digit(
         string calibrationValueAmended,
         int expectedCalibrationValue)
     {
+        // Given
+        var spelledOutDigits = new Dictionary<string, int>
+        {
+            {"one", 1},
+            {"two", 2},
+            {"three", 3},
+            {"four", 4},
+            {"five", 5},
+            {"six", 6},
+            {"seven", 7},
+            {"eight", 8},
+            {"nine", 9}
+        };        
+        
         // When
-        var digit = 1;
+        var digit = spelledOutDigits[calibrationValueAmended];
 
         // Then
         digit.Should().Be(expectedCalibrationValue);
