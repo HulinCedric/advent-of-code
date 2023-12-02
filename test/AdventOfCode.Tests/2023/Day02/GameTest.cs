@@ -14,6 +14,7 @@ public class GamesTest
 {
     [Theory]
     [InputFileData("2023/Day02/sample.txt", 8)]
+    [InputFileData("2023/Day02/input.txt", 1734)]
     public void What_is_the_sum_of_the_ids_of_those_games(
         string gamesInformation,
         int expectedSumOfPossibleGameIds)
