@@ -18,6 +18,19 @@ public static partial class Trebuchet
         { "eight", "8" },
         { "nine", "9" }
     };
+    
+    private static readonly Dictionary<string, string> ReveredSpelledOutDigitTranslation = new()
+    {
+        { "eno", "1" },
+        { "owt", "2" },
+        { "eerht", "3" },
+        { "ruof", "4" },
+        { "evif", "5" },
+        { "xis", "6" },
+        { "neves", "7" },
+        { "thgie", "8" },
+        { "enin", "9" }
+    };
 
     public static int ParseCalibrationValue(string calibrationValueAmended)
         => ComputeCalibrationValue(
@@ -39,7 +52,7 @@ public static partial class Trebuchet
     {
         var spelledOutDigitTranslated = calibrationValueAmended.Aggregate(
             "",
-            (accumulator, current) => ReplaceSpelledOutDigit(accumulator + current));
+            (accumulator, current) => ReplaceSpelledOutDigit(accumulator + current, SpelledOutDigitTranslation));
 
         return FirstDigit(spelledOutDigitTranslated);
     }
@@ -54,7 +67,7 @@ public static partial class Trebuchet
         {
             accumulator = calibrationValueAmended[i] + accumulator;
 
-            accumulator = ReplaceSpelledOutDigit(accumulator);
+            accumulator = ReplaceSpelledOutDigit(accumulator, SpelledOutDigitTranslation);
 
             if (accumulator.Any(char.IsDigit))
             {
@@ -66,11 +79,11 @@ public static partial class Trebuchet
         return lastDigit;
     }
 
-    private static string ReplaceSpelledOutDigit(string calibrationValueAmended)
+    private static string ReplaceSpelledOutDigit(string calibrationValueAmended, Dictionary<string, string> spelledOutDigitTranslation)
         => SpelledOutDigitRegex()
             .Replace(
                 calibrationValueAmended,
-                match => SpelledOutDigitTranslation[match.Value]);
+                match => spelledOutDigitTranslation[match.Value]);
 
     [GeneratedRegex("(one|two|three|four|five|six|seven|eight|nine)")]
     private static partial Regex SpelledOutDigitRegex();
