@@ -19,7 +19,7 @@ public static partial class Trebuchet
         { "nine", "9" }
     };
 
-    public static int FindCalibrationValue(string calibrationValueAmended)
+    public static int ParseCalibrationValue(string calibrationValueAmended)
     {
         var firstDigit = calibrationValueAmended.First(char.IsDigit);
         var lastDigit = calibrationValueAmended.Last(char.IsDigit);
@@ -27,7 +27,7 @@ public static partial class Trebuchet
         return int.Parse(string.Concat(firstDigit, lastDigit));
     }
 
-    public static int FindCalibrationValueWithSpelledOutDigit(string calibrationValueAmended)
+    public static int ParseCalibrationValueWithSpelledOutDigit(string calibrationValueAmended)
     {
         var firstDigit = "";
 

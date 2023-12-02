@@ -1,6 +1,7 @@
 using System.Linq;
 using FluentAssertions;
 using Xunit;
+using static AdventOfCode._2023.Day01.Trebuchet;
 
 namespace AdventOfCode._2023.Day01;
 
@@ -17,7 +18,7 @@ public class TrebuchetTest
         var calibrationValuesAmended = calibrationDocument.Split("\n");
 
         // When
-        var sumOfCalibrationValues = calibrationValuesAmended.Select(Trebuchet.FindCalibrationValue).Sum();
+        var sumOfCalibrationValues = calibrationValuesAmended.Select(ParseCalibrationValue).Sum();
 
         // Then
         sumOfCalibrationValues.Should().Be(expectedSumOfCalibrationValues);
@@ -36,11 +37,10 @@ public class TrebuchetTest
         var calibrationValuesAmended = calibrationDocument.Split("\n");
 
         // When
-        var sumOfCalibrationValues =
-            calibrationValuesAmended.Select(Trebuchet.FindCalibrationValueWithSpelledOutDigit).Sum();
+        var sum = calibrationValuesAmended.Select(ParseCalibrationValueWithSpelledOutDigit).Sum();
 
         // Then
-        sumOfCalibrationValues.Should().Be(expectedSumOfCalibrationValues);
+        sum.Should().Be(expectedSumOfCalibrationValues);
     }
 
     [Theory]
@@ -53,7 +53,7 @@ public class TrebuchetTest
         int expectedCalibrationValue)
     {
         // When
-        var calibrationValue = Trebuchet.FindCalibrationValue(calibrationValueAmended);
+        var calibrationValue = ParseCalibrationValue(calibrationValueAmended);
 
         // Then
         calibrationValue.Should().Be(expectedCalibrationValue);
@@ -72,7 +72,7 @@ public class TrebuchetTest
         int expectedCalibrationValue)
     {
         // When
-        var calibrationValue = Trebuchet.FindCalibrationValueWithSpelledOutDigit(calibrationValueAmended);
+        var calibrationValue = ParseCalibrationValueWithSpelledOutDigit(calibrationValueAmended);
 
         // Then
         calibrationValue.Should().Be(expectedCalibrationValue);
