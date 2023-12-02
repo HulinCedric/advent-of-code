@@ -18,19 +18,6 @@ public static partial class Trebuchet
         { "eight", "8" },
         { "nine", "9" }
     };
-    
-    private static readonly Dictionary<string, string> ReveredSpelledOutDigitTranslation = new()
-    {
-        { "eno", "1" },
-        { "owt", "2" },
-        { "eerht", "3" },
-        { "ruof", "4" },
-        { "evif", "5" },
-        { "xis", "6" },
-        { "neves", "7" },
-        { "thgie", "8" },
-        { "enin", "9" }
-    };
 
     public static int ParseCalibrationValue(string calibrationValueAmended)
         => ComputeCalibrationValue(
@@ -39,8 +26,8 @@ public static partial class Trebuchet
 
     public static int ParseCalibrationValueWithSpelledOutDigit(string calibrationValueAmended)
         => ComputeCalibrationValue(
-            FirstDigitWithSpelledOutDigit(calibrationValueAmended),
-            LastDigitWithSpelledOutDigit(calibrationValueAmended));
+            FirstDigit(TranslateSpelledOutDigitFromTheBeginning(calibrationValueAmended)),
+            LastDigit(TranslateSpelledOutDigitFromTheEnd(calibrationValueAmended)));
 
     private static string FirstDigit(string calibrationValueAmended)
         => calibrationValueAmended.First(char.IsDigit).ToString();
@@ -48,38 +35,22 @@ public static partial class Trebuchet
     private static string LastDigit(string calibrationValueAmended)
         => calibrationValueAmended.Last(char.IsDigit).ToString();
 
-    private static string FirstDigitWithSpelledOutDigit(string calibrationValueAmended)
-    {
-        var spelledOutDigitTranslated = calibrationValueAmended.Aggregate(
-            "",
-            (accumulator, current) => ReplaceSpelledOutDigit(accumulator + current, SpelledOutDigitTranslation));
+    private static string TranslateSpelledOutDigitFromTheBeginning(string calibrationValueAmended)
+        => calibrationValueAmended
+            .Aggregate(
+                "",
+                (accumulator, current) => ReplaceSpelledOutDigit(accumulator + current, SpelledOutDigitTranslation));
 
-        return FirstDigit(spelledOutDigitTranslated);
-    }
+    private static string TranslateSpelledOutDigitFromTheEnd(string calibrationValueAmended)
+        => calibrationValueAmended
+            .Reverse()
+            .Aggregate(
+                "",
+                (accumulator, current) => ReplaceSpelledOutDigit(current + accumulator, SpelledOutDigitTranslation));
 
-    private static string LastDigitWithSpelledOutDigit(string calibrationValueAmended)
-    {
-        var lastDigit = "";
-
-        var accumulator = "";
-
-        for (var i = calibrationValueAmended.Length - 1; i >= 0; i--)
-        {
-            accumulator = calibrationValueAmended[i] + accumulator;
-
-            accumulator = ReplaceSpelledOutDigit(accumulator, SpelledOutDigitTranslation);
-
-            if (accumulator.Any(char.IsDigit))
-            {
-                lastDigit = LastDigit(accumulator);
-                break;
-            }
-        }
-
-        return lastDigit;
-    }
-
-    private static string ReplaceSpelledOutDigit(string calibrationValueAmended, Dictionary<string, string> spelledOutDigitTranslation)
+    private static string ReplaceSpelledOutDigit(
+        string calibrationValueAmended,
+        Dictionary<string, string> spelledOutDigitTranslation)
         => SpelledOutDigitRegex()
             .Replace(
                 calibrationValueAmended,
