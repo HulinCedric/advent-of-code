@@ -12,28 +12,20 @@ public class GamesTest
     public void What_is_the_sum_of_the_ids_of_possible_games(
         string gamesInformation,
         int expectedSumOfPossibleGameIds)
-    {
-        // Given
-        var games = Game.ParseMany(gamesInformation);
-
-        // When
-        var sumOfPossibleGameIds = games
+        => Game.ParseMany(gamesInformation)
             .Where(game => game.IsPossible())
-            .Sum(game => game.Id);
+            .Sum(possibleGame => possibleGame.Id)
+            .Should()
+            .Be(expectedSumOfPossibleGameIds);
 
-        // Then
-        sumOfPossibleGameIds.Should().Be(expectedSumOfPossibleGameIds);
-    }
-
-    // fewest number of cubes of each color
     [Theory]
     [InputFileData("2023/Day02/sample.txt", 2286)]
     [InputFileData("2023/Day02/input.txt", 70387)]
-    public void What_is_the_sum_of_the_power_of_all_games(
+    public void What_is_the_sum_of_the_power_of_the_max_possible_hand(
         string gamesInformation,
         int expectedSumOfPower)
         => Game.ParseMany(gamesInformation)
-            .Select(game => game.PossibleHand())
+            .Select(game => game.MaxPossibleHand())
             .Sum(hand => hand.Power())
             .Should()
             .Be(expectedSumOfPower);

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace AdventOfCode._2023.Day02;
 
-public record Game
+public class Game
 {
     private Game(int id, List<Hand> hands)
     {
@@ -11,7 +11,7 @@ public record Game
         Hands = hands;
     }
 
-    public List<Hand> Hands { get; }
+    private List<Hand> Hands { get; }
 
     public int Id { get; }
 
@@ -35,14 +35,16 @@ public record Game
     }
 
     public bool IsPossible()
-        => Hands.All(x => x.Cubes.All(c => c.IsPossible()));
+        => Hands.All(hand => hand.Cubes.All(cubes => cubes.IsPossible()));
 
-    // in each game you played, what is the fewest number of cubes of each color that could have been in the bag to make the game possible?
-    public Hand PossibleHand()
+    public Hand MaxPossibleHand()
         => new(
             Hands
                 .SelectMany(hand => hand.Cubes)
                 .GroupBy(cubes => cubes.Color)
-                .Select(group => group.OrderByDescending(cubes => cubes.Count).First())
+                .Select(
+                    group => group
+                        .OrderByDescending(cubes => cubes.Count)
+                        .First())
                 .ToList());
 }

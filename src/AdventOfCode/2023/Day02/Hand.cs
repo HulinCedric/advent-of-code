@@ -6,13 +6,13 @@ namespace AdventOfCode._2023.Day02;
 
 public class Hand
 {
-    internal Hand(List<Cubes> cubes)
+    internal Hand(List<Cube> cubes)
         => Cubes = cubes;
 
-    public List<Cubes> Cubes { get; }
+    internal List<Cube> Cubes { get; }
 
     /// <example>3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green</example>
-    public static List<Hand> ParseMany(string handsInformation)
+    internal static List<Hand> ParseMany(string handsInformation)
     {
         var cubesSets = handsInformation.Trim().Split(";", StringSplitOptions.TrimEntries);
 
@@ -24,7 +24,7 @@ public class Hand
         => new(
             handInformation
                 .Split(",", StringSplitOptions.TrimEntries)
-                .Select(Day02.Cubes.Parse)
+                .Select(Cube.Parse)
                 .ToList());
 
     public int Power()
