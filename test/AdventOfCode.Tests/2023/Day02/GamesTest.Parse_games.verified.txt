@@ -1,7 +1,7 @@
 ﻿{
   Values: [
     {
-      CubeSets: {
+      Hands: {
         Values: [
           {
             Cubes: [
@@ -44,7 +44,7 @@
       Id: 1
     },
     {
-      CubeSets: {
+      Hands: {
         Values: [
           {
             Cubes: [
@@ -91,7 +91,7 @@
       Id: 2
     },
     {
-      CubeSets: {
+      Hands: {
         Values: [
           {
             Cubes: [
@@ -142,7 +142,7 @@
       Id: 3
     },
     {
-      CubeSets: {
+      Hands: {
         Values: [
           {
             Cubes: [
@@ -193,7 +193,7 @@
       Id: 4
     },
     {
-      CubeSets: {
+      Hands: {
         Values: [
           {
             Cubes: [

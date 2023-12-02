@@ -32,6 +32,24 @@ public class GamesTest
     }
 
     [Theory]
+    [InputFileData("2023/Day02/sample.txt", 2286)]
+    [InputFileData("2023/Day02/input.txt", 70387)]
+    public void What_is_the_sum_of_the_power_of_these_sets(
+        string gamesInformation,
+        int expectedSumOfPossibleGameIds)
+    {
+        // Given
+        var games = Games.Parse(gamesInformation);
+
+        // When
+        var sumOfPossibleGameIds = games.Values
+            .Sum(game => game.Power());
+
+        // Then
+        sumOfPossibleGameIds.Should().Be(expectedSumOfPossibleGameIds);
+    }
+
+    [Theory]
     [InputFileData("2023/Day02/sample.txt")]
     public Task Parse_games(string gamesInformation)
         => Verify(Games.Parse(gamesInformation));
@@ -59,20 +77,20 @@ public class Games
 
     public List<Game> Values { get; }
 
-
     public static Games Parse(string gamesInformation)
         => new(gamesInformation.Split('\n').Select(Game.Parse).ToList());
 }
 
 public record Game
 {
-    private Game(int id, CubeSets cubeSets)
+    private Game(int id, Hands hands)
     {
         Id = id;
-        CubeSets = cubeSets;
+        Hands = hands;
     }
 
-    public CubeSets CubeSets { get; }
+    public Hands Hands { get; }
+
     public int Id { get; }
 
     public static Game Parse(string gameInformation)
@@ -81,45 +99,58 @@ public record Game
 
         var id = int.Parse(gameInformationParts[0].Replace("Game ", ""));
 
-        var hands = CubeSets.Parse(gameInformationParts[1]);
+        var hands = Hands.Parse(gameInformationParts[1]);
 
         return new Game(id, hands);
     }
 
     public bool IsPossible()
-        => CubeSets.Values.All(x => x.Cubes.All(c => c.IsPossible()));
-}
+        => Hands.Values.All(x => x.Cubes.All(c => c.IsPossible()));
 
-public class CubeSets
-{
-    private CubeSets(List<CubeSubsets> values)
-        => Values = values;
-
-    public List<CubeSubsets> Values { get; }
-
-    public static CubeSets Parse(string handsInformation)
+    public int Power()
     {
-        var cubesSets = handsInformation.Trim().Split(";", StringSplitOptions.TrimEntries);
+        // max count by color
+        var fewestNumberOfCubesByColor =
+            Hands.Values
+                .SelectMany(hand => hand.Cubes)
+                .GroupBy(cubes => cubes.Color)
+                .Select(g => g.Max(cubes => cubes.Count));
 
-        var cubesSubSets = cubesSets.Select(CubeSubsets.Parse).ToList();
-
-        return new CubeSets(cubesSubSets);
+        // multiply all
+        return fewestNumberOfCubesByColor.Aggregate(1, (current, next) => current * next);
     }
 }
 
-public class CubeSubsets
+public class Hands
 {
-    private CubeSubsets(List<Cubes> cubes)
+    private Hands(List<Hand> values)
+        => Values = values;
+
+    public List<Hand> Values { get; }
+
+    public static Hands Parse(string handsInformation)
+    {
+        var cubesSets = handsInformation.Trim().Split(";", StringSplitOptions.TrimEntries);
+
+        var cubesSubSets = cubesSets.Select(Hand.Parse).ToList();
+
+        return new Hands(cubesSubSets);
+    }
+}
+
+public class Hand
+{
+    private Hand(List<Cubes> cubes)
         => Cubes = cubes;
 
     public List<Cubes> Cubes { get; }
 
-    public static CubeSubsets Parse(string s)
+    public static Hand Parse(string s)
     {
         var cubes = s.Split(",", StringSplitOptions.TrimEntries).Select(Day02.Cubes.Parse).ToList();
 
 
-        return new CubeSubsets(cubes);
+        return new Hand(cubes);
     }
 }
 
