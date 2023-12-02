@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
 
@@ -19,4 +21,23 @@ public class GamesTest
         // Then
         sumOfPossibleGames.Should().Be(expectedSumOfPossibleGames);
     }
+
+    [Theory]
+    [InputFileData("2023/Day02/sample.txt", 5)]
+    public void Parse_game_count(
+        string gamesInformation,
+        int expectedGamesCount)
+    {
+        // When
+        var games = Games.Parse(gamesInformation);
+
+        // Then
+        games.Should().HaveCount(expectedGamesCount);
+    }
+}
+
+public class Games
+{
+    public static IEnumerable<string> Parse(string gamesInformation)
+        => gamesInformation.Split(Environment.NewLine);
 }
