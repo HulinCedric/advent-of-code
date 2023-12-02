@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
+using VerifyXunit;
 using Xunit;
+using static VerifyXunit.Verifier;
 
 namespace AdventOfCode._2023.Day02;
 
+[UsesVerify]
 public class GamesTest
 {
     [Theory]
@@ -23,17 +27,9 @@ public class GamesTest
     }
 
     [Theory]
-    [InputFileData("2023/Day02/sample.txt", 5)]
-    public void Parse_game_count(
-        string gamesInformation,
-        int expectedGamesCount)
-    {
-        // When
-        var games = Games.Parse(gamesInformation);
-
-        // Then
-        games.Should().HaveCount(expectedGamesCount);
-    }
+    [InputFileData("2023/Day02/sample.txt")]
+    public Task Parse_games(string gamesInformation)
+        => Verify(Games.Parse(gamesInformation));
 }
 
 public class Games
