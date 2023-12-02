@@ -20,18 +20,27 @@ public static partial class Trebuchet
     };
 
     public static int ParseCalibrationValue(string calibrationValueAmended)
-    {
-        var firstDigit = calibrationValueAmended.First(char.IsDigit);
-        var lastDigit = calibrationValueAmended.Last(char.IsDigit);
-
-        return int.Parse(string.Concat(firstDigit, lastDigit));
-    }
+        => ComputeCalibrationValue(
+            FirstDigit(calibrationValueAmended),
+            LastDigit(calibrationValueAmended));
 
     public static int ParseCalibrationValueWithSpelledOutDigit(string calibrationValueAmended)
+        => ComputeCalibrationValue(
+            FirstDigitWithSpelledOutDigit(calibrationValueAmended),
+            LastDigitWithSpelledOutDigit(calibrationValueAmended));
+
+    private static string FirstDigit(string calibrationValueAmended)
+        => calibrationValueAmended.First(char.IsDigit).ToString();
+
+    private static string LastDigit(string calibrationValueAmended)
+        => calibrationValueAmended.Last(char.IsDigit).ToString();
+
+    private static string FirstDigitWithSpelledOutDigit(string calibrationValueAmended)
     {
         var firstDigit = "";
 
         var accumulator = "";
+
         for (var i = 0; i < calibrationValueAmended.Length; i++)
         {
             accumulator = accumulator + calibrationValueAmended[i];
@@ -40,16 +49,19 @@ public static partial class Trebuchet
 
             if (accumulator.Any(char.IsDigit))
             {
-                firstDigit = accumulator.First(char.IsDigit).ToString();
+                firstDigit = FirstDigit(accumulator);
                 break;
             }
         }
 
+        return firstDigit;
+    }
 
-        // Reverse calibrationValueAmended and use reversed spelledOutDigitTranslation
+    private static string LastDigitWithSpelledOutDigit(string calibrationValueAmended)
+    {
         var lastDigit = "";
 
-        accumulator = "";
+        var accumulator = "";
 
         for (var i = calibrationValueAmended.Length - 1; i >= 0; i--)
         {
@@ -59,12 +71,12 @@ public static partial class Trebuchet
 
             if (accumulator.Any(char.IsDigit))
             {
-                lastDigit = accumulator.Last(char.IsDigit).ToString();
+                lastDigit = LastDigit(accumulator);
                 break;
             }
         }
 
-        return int.Parse(string.Concat(firstDigit, lastDigit));
+        return lastDigit;
     }
 
     private static string ReplaceSpelledOutDigit(string calibrationValueAmended)
@@ -75,4 +87,7 @@ public static partial class Trebuchet
 
     [GeneratedRegex("(one|two|three|four|five|six|seven|eight|nine)")]
     private static partial Regex SpelledOutDigitRegex();
+
+    private static int ComputeCalibrationValue(string firstDigit, string lastDigit)
+        => int.Parse(string.Concat(firstDigit, lastDigit));
 }
