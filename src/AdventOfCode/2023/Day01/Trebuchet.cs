@@ -37,24 +37,11 @@ public static partial class Trebuchet
 
     private static string FirstDigitWithSpelledOutDigit(string calibrationValueAmended)
     {
-        var firstDigit = "";
+        var spelledOutDigitTranslated = calibrationValueAmended.Aggregate(
+            "",
+            (accumulator, current) => ReplaceSpelledOutDigit(accumulator + current));
 
-        var accumulator = "";
-
-        for (var i = 0; i < calibrationValueAmended.Length; i++)
-        {
-            accumulator = accumulator + calibrationValueAmended[i];
-
-            accumulator = ReplaceSpelledOutDigit(accumulator);
-
-            if (accumulator.Any(char.IsDigit))
-            {
-                firstDigit = FirstDigit(accumulator);
-                break;
-            }
-        }
-
-        return firstDigit;
+        return FirstDigit(spelledOutDigitTranslated);
     }
 
     private static string LastDigitWithSpelledOutDigit(string calibrationValueAmended)
