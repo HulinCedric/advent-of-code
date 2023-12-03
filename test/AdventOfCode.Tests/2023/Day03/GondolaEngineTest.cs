@@ -35,6 +35,19 @@ public class GondolaEngineTest
         // Assert
         number.Select(n => n.Value).Should().BeEquivalentTo(expectedNumber);
     }
+
+    [Theory]
+    [InlineData(".114.\n.....")]
+    [InlineData("467.\n...*")]
+    [InlineData("..*.\n.35.\n....")]
+    public void Parse_number_in_map(string schematic)
+    {
+        // Act
+        var numbers = GondolaEngine.GetNumbers(schematic);
+
+        // Assert
+        numbers.Should().HaveCount(1);
+    }
 }
 
 public static class GondolaEngine
@@ -42,25 +55,47 @@ public static class GondolaEngine
     public static int CalculatePartNumbersSum(string[] schematic)
         => 4361;
 
-    public static PartNumber[] GetNumbers(string schematic, int y = 0)
+
+    private static PartNumber[] GetNumbersInLine(string schematicLine, int lineIndex)
     {
         var coordinates = new List<(int startX, int endX, int y)>();
-        for (var i = 0; i < schematic.Length; i++)
-            if (char.IsDigit(schematic[i]))
+        for (var columnIndex = 0; columnIndex < schematicLine.Length; columnIndex++)
+        {
+            if (char.IsDigit(schematicLine[columnIndex]))
             {
-                var x = i;
-                while (x < schematic.Length &&
-                       char.IsDigit(schematic[x]))
-                    x++;
-                coordinates.Add((i, x, y));
-                i = x;
+                var endX = columnIndex;
+                while (endX < schematicLine.Length &&
+                       char.IsDigit(schematicLine[endX]))
+                {
+                    endX++;
+                }
+
+                coordinates.Add((columnIndex, endX, lineIndex));
+                columnIndex = endX;
             }
+        }
 
         var numbers = new List<PartNumber>();
         foreach (var coordinate in coordinates)
-            numbers.Add(PartNumber.ExtractNumber(schematic, coordinate));
+        {
+            numbers.Add(PartNumber.ExtractNumber(schematicLine, coordinate));
+        }
 
         return numbers.ToArray();
+    }
+
+    public static IEnumerable<PartNumber> GetNumbers(string schematic)
+    {
+        var map = schematic.Split('\n');
+
+        var partNumbers = new List<PartNumber>();
+        for (var lineIndex = 0; lineIndex < map.Length; lineIndex++)
+        {
+            var line = map[lineIndex];
+            partNumbers.AddRange(GetNumbersInLine(line, lineIndex));
+        }
+
+        return partNumbers;
     }
 }
 
