@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -7,9 +9,7 @@ public class GondolaEngineTest
 {
     [Theory]
     [InputFileData("2023/Day03/sample.txt", 4361)]
-    public void Sum_of_all_part_numbers(
-        string schematicDescription,
-        int expectedSum)
+    public void Sum_of_all_part_numbers(string schematicDescription, int expectedSum)
     {
         // Arrange
         var schematic = schematicDescription.Split('\n');
@@ -20,10 +20,71 @@ public class GondolaEngineTest
         // Assert
         actualSum.Should().Be(expectedSum);
     }
+
+    [Theory]
+    [InlineData("1", new[] { 1 })]
+    [InlineData("114", new[] { 114 })]
+    [InlineData(".114.", new[] { 114 })]
+    [InlineData("467..114..", new[] { 467, 114 })]
+    [InlineData("..35..633.", new[] { 35, 633 })]
+    public void Identify_numbers(string schematic, int[] expectedNumber)
+    {
+        // Act
+        var number = GondolaEngine.GetNumbers(schematic);
+
+        // Assert
+        number.Select(n => n.Value).Should().BeEquivalentTo(expectedNumber);
+    }
 }
 
 public static class GondolaEngine
 {
     public static int CalculatePartNumbersSum(string[] schematic)
         => 4361;
+
+    public static PartNumber[] GetNumbers(string schematic, int y = 0)
+    {
+        var coordinates = new List<(int startX, int endX, int y)>();
+        for (var i = 0; i < schematic.Length; i++)
+            if (char.IsDigit(schematic[i]))
+            {
+                var x = i;
+                while (x < schematic.Length &&
+                       char.IsDigit(schematic[x]))
+                    x++;
+                coordinates.Add((i, x, y));
+                i = x;
+            }
+
+        var numbers = new List<PartNumber>();
+        foreach (var coordinate in coordinates)
+            numbers.Add(PartNumber.ExtractNumber(schematic, coordinate));
+
+        return numbers.ToArray();
+    }
+}
+
+public class PartNumber
+{
+    private PartNumber(int value, int startX, int endX, int y)
+    {
+        Value = value;
+        StartX = startX;
+        EndX = endX;
+        Y = y;
+    }
+
+    public int EndX { get; }
+    public int StartX { get; }
+    public int Value { get; }
+    public int Y { get; }
+
+    internal static PartNumber ExtractNumber(string schematic, (int startX, int endX, int y) coordinate)
+    {
+        var number = 0;
+        for (var i = coordinate.startX; i < coordinate.endX; i++)
+            number = number * 10 + (schematic[i] - '0');
+
+        return new PartNumber(number, coordinate.startX, coordinate.endX, coordinate.y);
+    }
 }
