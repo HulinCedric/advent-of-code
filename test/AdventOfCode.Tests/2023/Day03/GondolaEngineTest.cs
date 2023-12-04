@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using Xunit;
 
@@ -9,7 +11,7 @@ public class GondolaEngineTest
 {
     [Theory]
     [InputFileData("2023/Day03/sample.txt", 4361)]
-    [InputFileData("2023/Day03/input.txt", 538792)]
+    [InputFileData("2023/Day03/input.txt", 531932)]
     public void Sum_of_all_part_numbers(string schematic, int expectedSum)
     {
         // Arrange
@@ -29,9 +31,12 @@ public class GondolaEngineTest
         // Arrange
         var map = schematic.Split('\n');
 
+        var numbers = GondolaEngine.ParseNumberInMap(map).ToArray();
+        var symbols = GondolaEngine.ParseSymbolInMap(map).ToArray();
+
         // Act
-        var partNumbers = GondolaEngine.ParseNumberInMap(map)
-            .Where(n => n.IsPartNumber(map))
+        var partNumbers = numbers
+            .Where(n => n.IsAdjacent(symbols))
             .Select(n => n.Value);
 
         // Assert
@@ -61,8 +66,10 @@ public class GondolaEngineTest
     [InlineData("..35..633.", new[] { 35, 633 })]
     public void Identify_numbers(string schematic, int[] expectedNumber)
     {
-        // Act
+        // Arrange
         var map = schematic.Split('\n');
+
+        // Act
         var number = GondolaEngine.ParseNumberInMap(map);
 
         // Assert
@@ -88,6 +95,23 @@ public class GondolaEngineTest
     }
 
     [Theory]
+    [InlineData("467.\n...*")]
+    [InlineData("..*.\n.35.\n....")]
+    [InlineData(".....\n.633.\n.#...")]
+    [InlineData("....\n617*\n....")]
+    public void Parse_symbol_in_map(string schematic)
+    {
+        // Arrange
+        var map = schematic.Split('\n');
+
+        // Act
+        var symbols = GondolaEngine.ParseSymbolInMap(map);
+
+        // Assert
+        symbols.Should().HaveCount(1);
+    }
+
+    [Theory]
     [InlineData(".114.\n.....", false)]
     [InlineData("467.\n...*", true)]
     [InlineData("..*.\n.35.\n....", true)]
@@ -101,9 +125,10 @@ public class GondolaEngineTest
         // Arrange
         var map = schematic.Split('\n');
         var number = GondolaEngine.ParseNumberInMap(map).Single();
+        var symbols = GondolaEngine.ParseSymbolInMap(map).ToArray();
 
         // Act
-        var isPartNumber = number.IsPartNumber(map);
+        var isPartNumber = number.IsAdjacent(symbols);
 
         // Assert
         isPartNumber.Should().Be(expectedIsPartNumber);
@@ -115,81 +140,81 @@ public static class GondolaEngine
     public static int CalculatePartNumbersSum(string[] map)
     {
         var partNumbers = ParseNumberInMap(map);
-        return partNumbers.Where(n => n.IsPartNumber(map)).Sum(n => n.Value);
+        var symbols = ParseSymbolInMap(map);
+
+        return (from number in partNumbers
+                from symbol in symbols
+                where number.IsAdjacent(symbol)
+                select number.Value).Sum();
     }
 
-
-    private static PartNumber[] GetNumbersInLine(string schematicLine, int lineIndex)
+    public static IEnumerable<Symbol> ParseSymbolInMap(string[] map)
     {
-        var coordinates = new List<(int startX, int endX, int y)>();
-        for (var columnIndex = 0; columnIndex < schematicLine.Length; columnIndex++)
-            if (char.IsDigit(schematicLine[columnIndex]))
-            {
-                var endX = columnIndex;
-                while (endX < schematicLine.Length &&
-                       char.IsDigit(schematicLine[endX]))
-                    endX++;
+        var symbolRegex = new Regex("[^.0-9]");
 
-                coordinates.Add((columnIndex, endX, lineIndex));
-                columnIndex = endX;
-            }
-
-        var numbers = new List<PartNumber>();
-        foreach (var coordinate in coordinates)
-            numbers.Add(PartNumber.ExtractNumber(schematicLine, coordinate));
-
-        return numbers.ToArray();
-    }
-
-    public static IEnumerable<PartNumber> ParseNumberInMap(string[] map)
-    {
-        var partNumbers = new List<PartNumber>();
-        for (var lineIndex = 0; lineIndex < map.Length; lineIndex++)
+        var symbols = new List<Symbol>();
+        for (var rowIndex = 0; rowIndex < map.Length; rowIndex++)
         {
-            var line = map[lineIndex];
-            partNumbers.AddRange(GetNumbersInLine(line, lineIndex));
+            foreach (Match found in symbolRegex.Matches(map[rowIndex]))
+            {
+                symbols.Add(new Symbol(found.Value, rowIndex, found.Index));
+            }
         }
 
-        return partNumbers;
+        return symbols;
+    }
+
+    public static IEnumerable<Number> ParseNumberInMap(string[] map)
+    {
+        var numberRegex = new Regex(@"\d+");
+
+        var numbers = new List<Number>();
+        for (var rowIndex = 0; rowIndex < map.Length; rowIndex++)
+        {
+            foreach (Match found in numberRegex.Matches(map[rowIndex]))
+            {
+                numbers.Add(new Number(found.Value, rowIndex, found.Index));
+            }
+        }
+
+        return numbers;
     }
 }
 
-public class PartNumber
+public class Symbol
 {
-    private PartNumber(int value, int startX, int endX, int y)
+    public Symbol(string text, int rowIndex, int columnIndex)
     {
-        Value = value;
-        StartX = startX;
-        EndX = endX;
-        Y = y;
+        Text = text;
+        RowIndex = rowIndex;
+        ColumnIndex = columnIndex;
     }
 
-    public int EndX { get; }
-    public int StartX { get; }
+    public int ColumnIndex { get; }
+    public int RowIndex { get; }
+    public string Text { get; }
+}
+
+public class Number
+{
+    public Number(string text, int rowIndex, int columnIndex)
+    {
+        Value = int.Parse(text);
+        Text = text;
+        RowIndex = rowIndex;
+        ColumnIndex = columnIndex;
+    }
+
+    public int ColumnIndex { get; }
+    public int RowIndex { get; }
+    public string Text { get; }
     public int Value { get; }
-    public int Y { get; }
 
-    internal static PartNumber ExtractNumber(string schematic, (int startX, int endX, int y) coordinate)
-    {
-        var number = 0;
-        for (var i = coordinate.startX; i < coordinate.endX; i++)
-            number = number * 10 + (schematic[i] - '0');
+    public bool IsAdjacent(Symbol[] symbols)
+        => symbols.Any(IsAdjacent);
 
-        return new PartNumber(number, coordinate.startX, coordinate.endX, coordinate.y);
-    }
-
-    public bool IsPartNumber(string[] map)
-    {
-        for (var x = StartX - 1; x <= EndX + 1; x++)
-        for (var y = Y - 1; y <= Y + 1; y++)
-            if (x >= 0 &&
-                x < map[0].Length &&
-                y >= 0 &&
-                y < map.Length)
-                if (!char.IsDigit(map[y][x]) &&
-                    map[y][x] != '.')
-                    return true;
-
-        return false;
-    }
+    public bool IsAdjacent(Symbol symbol)
+        => Math.Abs(symbol.RowIndex - RowIndex) <= 1 &&
+           ColumnIndex <= symbol.ColumnIndex + symbol.Text.Length &&
+           symbol.ColumnIndex <= ColumnIndex + Text.Length;
 }
