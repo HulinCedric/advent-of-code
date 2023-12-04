@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using FluentAssertions;
 using Xunit;
 
@@ -52,7 +47,7 @@ public class GondolaEngineTest
         var map = schematic.Split('\n');
 
         // Act
-        var numbers = GondolaEngine.ParseInMap<Number>(map);
+        var numbers = GondolaEngine.ParseInSchematic<Number>(map);
 
         // Assert
         numbers.Should().HaveCount(1);
@@ -69,7 +64,7 @@ public class GondolaEngineTest
         var map = schematic.Split('\n');
 
         // Act
-        var symbols = GondolaEngine.ParseInMap<Symbol>(map);
+        var symbols = GondolaEngine.ParseInSchematic<Symbol>(map);
 
         // Assert
         symbols.Should().HaveCount(1);
@@ -85,118 +80,9 @@ public class GondolaEngineTest
         var map = schematic.Split('\n');
 
         // Act
-        var numbers = GondolaEngine.ParseInMap<Gear>(map);
+        var numbers = GondolaEngine.ParseInSchematic<Gear>(map);
 
         // Assert
         numbers.Should().HaveCount(1);
-    }
-}
-
-public static class GondolaEngine
-{
-    public static int CalculatePartNumbersSum(string[] map)
-    {
-        var partNumbers = ParseInMap<Number>(map);
-        var symbols = ParseInMap<Symbol>(map);
-
-        return (from number in partNumbers
-                from symbol in symbols
-                where number.IsAdjacent(symbol)
-                select number.Value).Sum();
-    }
-
-    public static int CalculateGearRatioSum(string[] map)
-    {
-        var gears = ParseInMap<Gear>(map);
-        var numbers = ParseInMap<Number>(map);
-
-        return gears
-            .Select(gear => numbers.Where(number => number.IsAdjacent(gear)).ToArray())
-            .Where(gearPartNumbers => gearPartNumbers.Length == 2)
-            .Sum(gearsPartNumbers => gearsPartNumbers[0].Value * gearsPartNumbers[1].Value);
-    }
-
-    public static List<TPart> ParseInMap<TPart>(string[] map) where TPart : Part
-    {
-        var regexMethod = typeof(TPart).GetMethod("Regex", BindingFlags.Static | BindingFlags.NonPublic);
-        var regex = (Regex)regexMethod.Invoke(null, null);
-        return ParseInMap<TPart>(map, regex);
-    }
-
-    private static List<TPart> ParseInMap<TPart>(string[] map, Regex regex) where TPart : Part
-    {
-        var parts = new List<TPart>();
-
-        for (var rowIndex = 0; rowIndex < map.Length; rowIndex++)
-        {
-            foreach (Match found in regex.Matches(map[rowIndex]))
-            {
-                parts.Add(PartFactory.Create<TPart>(found.Value, rowIndex, found.Index));
-            }
-        }
-
-        return parts;
-    }
-}
-
-public class Part
-{
-    protected Part(string text, int rowIndex, int columnIndex)
-    {
-        ColumnIndex = columnIndex;
-        RowIndex = rowIndex;
-        Text = text;
-    }
-
-    public int ColumnIndex { get; }
-    public int RowIndex { get; }
-    public string Text { get; }
-}
-
-public partial class Symbol(string text, int rowIndex, int columnIndex) : Part(text, rowIndex, columnIndex)
-{
-    [GeneratedRegex("[^.0-9]")]
-    internal static partial Regex Regex();
-}
-
-public partial class Gear(string text, int rowIndex, int columnIndex) : Part(text, rowIndex, columnIndex)
-{
-    [GeneratedRegex(@"\*")]
-    internal static partial Regex Regex();
-}
-
-public partial class Number(string text, int rowIndex, int columnIndex) : Part(text, rowIndex, columnIndex)
-{
-    public int Value { get; } = int.Parse(text);
-
-    [GeneratedRegex(@"\d+")]
-    internal static partial Regex Regex();
-
-    public bool IsAdjacent(Part part)
-        => Math.Abs(part.RowIndex - RowIndex) <= 1 &&
-           ColumnIndex <= part.ColumnIndex + part.Text.Length &&
-           part.ColumnIndex <= ColumnIndex + Text.Length;
-}
-
-public static class PartFactory
-{
-    public static TPart Create<TPart>(string text, int rowIndex, int columnIndex) where TPart : Part
-    {
-        if (typeof(TPart) == typeof(Number))
-        {
-            return (TPart)(object)new Number(text, rowIndex, columnIndex);
-        }
-
-        if (typeof(TPart) == typeof(Symbol))
-        {
-            return (TPart)(object)new Symbol(text, rowIndex, columnIndex);
-        }
-
-        if (typeof(TPart) == typeof(Gear))
-        {
-            return (TPart)(object)new Gear(text, rowIndex, columnIndex);
-        }
-
-        throw new ArgumentException($"Unsupported type: {typeof(TPart)}");
     }
 }
