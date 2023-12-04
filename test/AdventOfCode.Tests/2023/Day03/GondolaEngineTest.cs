@@ -25,6 +25,21 @@ public class GondolaEngineTest
     }
 
     [Theory]
+    [InputFileData("2023/Day03/sample.txt", 467835)]
+    [InputFileData("2023/Day03/sample.txt", 467835)]
+    public void Sum_of_all_gear_ratio(string schematic, int expectedSum)
+    {
+        // Arrange
+        var map = schematic.Split('\n');
+
+        // Act
+        var actualSum = GondolaEngine.CalculateGearRatioSum(map);
+
+        // Assert
+        actualSum.Should().Be(expectedSum);
+    }
+
+    [Theory]
     [InputFileData("2023/Day03/sample.txt", new[] { 467, 35, 633, 617, 592, 755, 664, 598 })]
     public void All_part_numbers(string schematic, int[] expectedPartNumbers)
     {
@@ -110,7 +125,7 @@ public class GondolaEngineTest
         // Assert
         symbols.Should().HaveCount(1);
     }
-    
+
     [Theory]
     [InlineData("467.\n...*")]
     [InlineData("..*.\n.35.\n....")]
@@ -164,6 +179,17 @@ public static class GondolaEngine
                 select number.Value).Sum();
     }
 
+    public static int CalculateGearRatioSum(string[] map)
+    {
+        var gears = ParseGearsInMap(map);
+        var numbers = ParseNumberInMap(map);
+
+        return gears
+            .Select(gear => numbers.Where(number => number.IsAdjacent(gear)).ToArray())
+            .Where(gearPartNumbers => gearPartNumbers.Length == 2)
+            .Sum(gearsPartNumbers => gearsPartNumbers[0].Value * gearsPartNumbers[1].Value);
+    }
+
     public static IEnumerable<Symbol> ParseSymbolInMap(string[] map)
     {
         var symbolRegex = new Regex("[^.0-9]");
@@ -210,7 +236,6 @@ public static class GondolaEngine
         }
 
         return gears;
-        
     }
 }
 
@@ -264,4 +289,9 @@ public class Number
         => Math.Abs(symbol.RowIndex - RowIndex) <= 1 &&
            ColumnIndex <= symbol.ColumnIndex + symbol.Text.Length &&
            symbol.ColumnIndex <= ColumnIndex + Text.Length;
+
+    public bool IsAdjacent(Gear gear)
+        => Math.Abs(gear.RowIndex - RowIndex) <= 1 &&
+           ColumnIndex <= gear.ColumnIndex + gear.Text.Length &&
+           gear.ColumnIndex <= ColumnIndex + Text.Length;
 }
