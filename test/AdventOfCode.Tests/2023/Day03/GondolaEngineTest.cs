@@ -110,6 +110,22 @@ public class GondolaEngineTest
         // Assert
         symbols.Should().HaveCount(1);
     }
+    
+    [Theory]
+    [InlineData("467.\n...*")]
+    [InlineData("..*.\n.35.\n....")]
+    [InlineData("....\n617*\n....")]
+    public void Parse_gears_in_map(string schematic)
+    {
+        // Arrange
+        var map = schematic.Split('\n');
+
+        // Act
+        var numbers = GondolaEngine.ParseGearsInMap(map);
+
+        // Assert
+        numbers.Should().HaveCount(1);
+    }
 
     [Theory]
     [InlineData(".114.\n.....", false)]
@@ -179,6 +195,37 @@ public static class GondolaEngine
 
         return numbers;
     }
+
+    public static IEnumerable<Gear> ParseGearsInMap(string[] map)
+    {
+        var gearRegex = new Regex(@"\*");
+
+        var gears = new List<Gear>();
+        for (var rowIndex = 0; rowIndex < map.Length; rowIndex++)
+        {
+            foreach (Match found in gearRegex.Matches(map[rowIndex]))
+            {
+                gears.Add(new Gear(found.Value, rowIndex, found.Index));
+            }
+        }
+
+        return gears;
+        
+    }
+}
+
+public class Gear
+{
+    public Gear(string text, int rowIndex, int columnIndex)
+    {
+        Text = text;
+        RowIndex = rowIndex;
+        ColumnIndex = columnIndex;
+    }
+
+    public int ColumnIndex { get; }
+    public int RowIndex { get; }
+    public string Text { get; }
 }
 
 public class Symbol
