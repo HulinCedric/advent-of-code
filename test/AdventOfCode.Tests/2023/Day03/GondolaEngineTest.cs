@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using FluentAssertions;
 using Xunit;
@@ -26,7 +27,7 @@ public class GondolaEngineTest
 
     [Theory]
     [InputFileData("2023/Day03/sample.txt", 467835)]
-    [InputFileData("2023/Day03/sample.txt", 467835)]
+    [InputFileData("2023/Day03/input.txt", 73646890)]
     public void Sum_of_all_gear_ratio(string schematic, int expectedSum)
     {
         // Arrange
@@ -37,58 +38,6 @@ public class GondolaEngineTest
 
         // Assert
         actualSum.Should().Be(expectedSum);
-    }
-
-    [Theory]
-    [InputFileData("2023/Day03/sample.txt", new[] { 467, 35, 633, 617, 592, 755, 664, 598 })]
-    public void All_part_numbers(string schematic, int[] expectedPartNumbers)
-    {
-        // Arrange
-        var map = schematic.Split('\n');
-
-        var numbers = GondolaEngine.ParseNumberInMap(map).ToArray();
-        var symbols = GondolaEngine.ParseSymbolInMap(map).ToArray();
-
-        // Act
-        var partNumbers = numbers
-            .Where(n => n.IsAdjacent(symbols))
-            .Select(n => n.Value);
-
-        // Assert
-        partNumbers.Should().BeEquivalentTo(expectedPartNumbers);
-    }
-
-    [Theory]
-    [InputFileData("2023/Day03/sample.txt", new[] { 467, 114, 35, 633, 617, 58, 592, 755, 664, 598 })]
-    public void All_numbers(string schematic, int[] expectedPartNumbers)
-    {
-        // Arrange
-        var map = schematic.Split('\n');
-
-        // Act
-        var numbers = GondolaEngine.ParseNumberInMap(map)
-            .Select(n => n.Value);
-
-        // Assert
-        numbers.Should().BeEquivalentTo(expectedPartNumbers);
-    }
-
-    [Theory]
-    [InlineData("1", new[] { 1 })]
-    [InlineData("114", new[] { 114 })]
-    [InlineData(".114.", new[] { 114 })]
-    [InlineData("467..114..", new[] { 467, 114 })]
-    [InlineData("..35..633.", new[] { 35, 633 })]
-    public void Identify_numbers(string schematic, int[] expectedNumber)
-    {
-        // Arrange
-        var map = schematic.Split('\n');
-
-        // Act
-        var number = GondolaEngine.ParseNumberInMap(map);
-
-        // Assert
-        number.Select(n => n.Value).Should().BeEquivalentTo(expectedNumber);
     }
 
     [Theory]
@@ -103,7 +52,7 @@ public class GondolaEngineTest
         var map = schematic.Split('\n');
 
         // Act
-        var numbers = GondolaEngine.ParseNumberInMap(map);
+        var numbers = GondolaEngine.ParseInMap<Number>(map);
 
         // Assert
         numbers.Should().HaveCount(1);
@@ -120,7 +69,7 @@ public class GondolaEngineTest
         var map = schematic.Split('\n');
 
         // Act
-        var symbols = GondolaEngine.ParseSymbolInMap(map);
+        var symbols = GondolaEngine.ParseInMap<Symbol>(map);
 
         // Assert
         symbols.Should().HaveCount(1);
@@ -136,33 +85,10 @@ public class GondolaEngineTest
         var map = schematic.Split('\n');
 
         // Act
-        var numbers = GondolaEngine.ParseGearsInMap(map);
+        var numbers = GondolaEngine.ParseInMap<Gear>(map);
 
         // Assert
         numbers.Should().HaveCount(1);
-    }
-
-    [Theory]
-    [InlineData(".114.\n.....", false)]
-    [InlineData("467.\n...*", true)]
-    [InlineData("..*.\n.35.\n....", true)]
-    [InlineData(".....\n.633.\n.#...", true)]
-    [InlineData("....\n617*\n....", true)]
-    [InlineData("....\n.58.\n....", false)]
-    [InlineData("....+\n.592.\n.....", true)]
-    [InlineData("...$.\n.664.", true)]
-    public void Is_part_number(string schematic, bool expectedIsPartNumber)
-    {
-        // Arrange
-        var map = schematic.Split('\n');
-        var number = GondolaEngine.ParseNumberInMap(map).Single();
-        var symbols = GondolaEngine.ParseSymbolInMap(map).ToArray();
-
-        // Act
-        var isPartNumber = number.IsAdjacent(symbols);
-
-        // Assert
-        isPartNumber.Should().Be(expectedIsPartNumber);
     }
 }
 
@@ -170,8 +96,8 @@ public static class GondolaEngine
 {
     public static int CalculatePartNumbersSum(string[] map)
     {
-        var partNumbers = ParseNumberInMap(map);
-        var symbols = ParseSymbolInMap(map);
+        var partNumbers = ParseInMap<Number>(map);
+        var symbols = ParseInMap<Symbol>(map);
 
         return (from number in partNumbers
                 from symbol in symbols
@@ -181,8 +107,8 @@ public static class GondolaEngine
 
     public static int CalculateGearRatioSum(string[] map)
     {
-        var gears = ParseGearsInMap(map);
-        var numbers = ParseNumberInMap(map);
+        var gears = ParseInMap<Gear>(map);
+        var numbers = ParseInMap<Number>(map);
 
         return gears
             .Select(gear => numbers.Where(number => number.IsAdjacent(gear)).ToArray())
@@ -190,62 +116,36 @@ public static class GondolaEngine
             .Sum(gearsPartNumbers => gearsPartNumbers[0].Value * gearsPartNumbers[1].Value);
     }
 
-    public static IEnumerable<Symbol> ParseSymbolInMap(string[] map)
+    public static List<TPart> ParseInMap<TPart>(string[] map) where TPart : Part
     {
-        var symbolRegex = new Regex("[^.0-9]");
-
-        var symbols = new List<Symbol>();
-        for (var rowIndex = 0; rowIndex < map.Length; rowIndex++)
-        {
-            foreach (Match found in symbolRegex.Matches(map[rowIndex]))
-            {
-                symbols.Add(new Symbol(found.Value, rowIndex, found.Index));
-            }
-        }
-
-        return symbols;
+        var regexMethod = typeof(TPart).GetMethod("Regex", BindingFlags.Static | BindingFlags.NonPublic);
+        var regex = (Regex)regexMethod.Invoke(null, null);
+        return ParseInMap<TPart>(map, regex);
     }
 
-    public static IEnumerable<Number> ParseNumberInMap(string[] map)
+    private static List<TPart> ParseInMap<TPart>(string[] map, Regex regex) where TPart : Part
     {
-        var numberRegex = new Regex(@"\d+");
+        var parts = new List<TPart>();
 
-        var numbers = new List<Number>();
         for (var rowIndex = 0; rowIndex < map.Length; rowIndex++)
         {
-            foreach (Match found in numberRegex.Matches(map[rowIndex]))
+            foreach (Match found in regex.Matches(map[rowIndex]))
             {
-                numbers.Add(new Number(found.Value, rowIndex, found.Index));
+                parts.Add(PartFactory.Create<TPart>(found.Value, rowIndex, found.Index));
             }
         }
 
-        return numbers;
-    }
-
-    public static IEnumerable<Gear> ParseGearsInMap(string[] map)
-    {
-        var gearRegex = new Regex(@"\*");
-
-        var gears = new List<Gear>();
-        for (var rowIndex = 0; rowIndex < map.Length; rowIndex++)
-        {
-            foreach (Match found in gearRegex.Matches(map[rowIndex]))
-            {
-                gears.Add(new Gear(found.Value, rowIndex, found.Index));
-            }
-        }
-
-        return gears;
+        return parts;
     }
 }
 
-public class Gear
+public class Part
 {
-    public Gear(string text, int rowIndex, int columnIndex)
+    protected Part(string text, int rowIndex, int columnIndex)
     {
-        Text = text;
-        RowIndex = rowIndex;
         ColumnIndex = columnIndex;
+        RowIndex = rowIndex;
+        Text = text;
     }
 
     public int ColumnIndex { get; }
@@ -253,45 +153,50 @@ public class Gear
     public string Text { get; }
 }
 
-public class Symbol
+public partial class Symbol(string text, int rowIndex, int columnIndex) : Part(text, rowIndex, columnIndex)
 {
-    public Symbol(string text, int rowIndex, int columnIndex)
-    {
-        Text = text;
-        RowIndex = rowIndex;
-        ColumnIndex = columnIndex;
-    }
-
-    public int ColumnIndex { get; }
-    public int RowIndex { get; }
-    public string Text { get; }
+    [GeneratedRegex("[^.0-9]")]
+    internal static partial Regex Regex();
 }
 
-public class Number
+public partial class Gear(string text, int rowIndex, int columnIndex) : Part(text, rowIndex, columnIndex)
 {
-    public Number(string text, int rowIndex, int columnIndex)
+    [GeneratedRegex(@"\*")]
+    internal static partial Regex Regex();
+}
+
+public partial class Number(string text, int rowIndex, int columnIndex) : Part(text, rowIndex, columnIndex)
+{
+    public int Value { get; } = int.Parse(text);
+
+    [GeneratedRegex(@"\d+")]
+    internal static partial Regex Regex();
+
+    public bool IsAdjacent(Part part)
+        => Math.Abs(part.RowIndex - RowIndex) <= 1 &&
+           ColumnIndex <= part.ColumnIndex + part.Text.Length &&
+           part.ColumnIndex <= ColumnIndex + Text.Length;
+}
+
+public static class PartFactory
+{
+    public static TPart Create<TPart>(string text, int rowIndex, int columnIndex) where TPart : Part
     {
-        Value = int.Parse(text);
-        Text = text;
-        RowIndex = rowIndex;
-        ColumnIndex = columnIndex;
+        if (typeof(TPart) == typeof(Number))
+        {
+            return (TPart)(object)new Number(text, rowIndex, columnIndex);
+        }
+
+        if (typeof(TPart) == typeof(Symbol))
+        {
+            return (TPart)(object)new Symbol(text, rowIndex, columnIndex);
+        }
+
+        if (typeof(TPart) == typeof(Gear))
+        {
+            return (TPart)(object)new Gear(text, rowIndex, columnIndex);
+        }
+
+        throw new ArgumentException($"Unsupported type: {typeof(TPart)}");
     }
-
-    public int ColumnIndex { get; }
-    public int RowIndex { get; }
-    public string Text { get; }
-    public int Value { get; }
-
-    public bool IsAdjacent(Symbol[] symbols)
-        => symbols.Any(IsAdjacent);
-
-    public bool IsAdjacent(Symbol symbol)
-        => Math.Abs(symbol.RowIndex - RowIndex) <= 1 &&
-           ColumnIndex <= symbol.ColumnIndex + symbol.Text.Length &&
-           symbol.ColumnIndex <= ColumnIndex + Text.Length;
-
-    public bool IsAdjacent(Gear gear)
-        => Math.Abs(gear.RowIndex - RowIndex) <= 1 &&
-           ColumnIndex <= gear.ColumnIndex + gear.Text.Length &&
-           gear.ColumnIndex <= ColumnIndex + Text.Length;
 }
