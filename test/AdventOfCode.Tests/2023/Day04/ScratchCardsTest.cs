@@ -21,7 +21,7 @@ public class ScratchCardsTest
         // Assert
         totalPoints.Should().Be(expectedTotalPoints);
     }
-    
+
     [Theory]
     [InputFileData("2023/Day04/sample.txt")]
     public void Table_parse_all_scratch_cards(string table)
@@ -32,20 +32,34 @@ public class ScratchCardsTest
         // Assert
         cards.Should().HaveCount(6);
     }
+
+    [Fact]
+    public void CardWithNoMatches_ShouldScoreZero()
+        => new ScratchCard(new[] { 1, 2, 3 }, new[] { 4, 5, 6 }).GetPoints().Should().Be(0);
 }
 
 public class Table
 {
     public static IEnumerable<ScratchCard> Parse(string table)
-    {
-        return table.Split('\n').Select(line => new ScratchCard());
-    }
+        => table.Split('\n')
+            .Select(
+                cardInformation =>
+                {
+                    var cardParts = cardInformation.Split(':', '|');
+
+                    var winningNumbers = cardParts[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+                    var numberYouHave = cardParts[2].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+
+                    return new ScratchCard(winningNumbers, numberYouHave);
+                });
 }
 
 public class ScratchCard
 {
-    public int GetPoints()
+    public ScratchCard(int[] winningNumbers, int[] numbersYouHave)
     {
-        return 0;
     }
+
+    public int GetPoints()
+        => 0;
 }
