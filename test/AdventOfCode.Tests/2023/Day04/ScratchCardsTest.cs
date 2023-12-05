@@ -21,13 +21,24 @@ public class ScratchCardsTest
         // Assert
         totalPoints.Should().Be(expectedTotalPoints);
     }
+    
+    [Theory]
+    [InputFileData("2023/Day04/sample.txt")]
+    public void Table_parse_all_scratch_cards(string table)
+    {
+        // Act
+        var cards = Table.Parse(table);
+
+        // Assert
+        cards.Should().HaveCount(6);
+    }
 }
 
 public class Table
 {
     public static IEnumerable<ScratchCard> Parse(string table)
     {
-        return ArraySegment<ScratchCard>.Empty;
+        return table.Split('\n').Select(line => new ScratchCard());
     }
 }
 
