@@ -34,8 +34,32 @@ public class ScratchCardsTest
     }
 
     [Fact]
-    public void CardWithNoMatches_ShouldScoreZero()
+    public void ShouldScoreZero_WithNoMatches()
         => new ScratchCard(new[] { 1, 2, 3 }, new[] { 4, 5, 6 }).GetPoints().Should().Be(0);
+
+    [Fact]
+    public void ShouldScoreOne_WithOneMatch()
+        => new ScratchCard(new[] { 1, 2, 3 }, new[] { 3, 4, 5 }).GetPoints().Should().Be(1);
+
+    [Fact]
+    public void ShouldScoreTwo_WithTwoMatches()
+        => new ScratchCard(new[] { 1, 2, 3, 4 }, new[] { 2, 3, 5, 6 }).GetPoints().Should().Be(2);
+
+    [Fact]
+    public void ShouldScoreFour_WithThreeMatches()
+        => new ScratchCard(new[] { 1, 2, 3, 4 }, new[] { 1, 2, 3, 5 }).GetPoints().Should().Be(4);
+
+    [Fact]
+    public void ShouldScoreEight_WithFourMatches()
+        => new ScratchCard(new[] { 1, 2, 3, 4 }, new[] { 1, 2, 3, 4 }).GetPoints().Should().Be(8);
+
+    [Fact]
+    public void ShouldScoreZero_WithNoWinningNumbers()
+        => new ScratchCard(new int[0], new[] { 1, 2, 3, 4 }).GetPoints().Should().Be(0);
+
+    [Fact]
+    public void ShouldScoreZero_WithNoNumbersYouHave()
+        => new ScratchCard(new[] { 1, 2, 3, 4 }, new int[0]).GetPoints().Should().Be(0);
 }
 
 public class Table
@@ -47,8 +71,14 @@ public class Table
                 {
                     var cardParts = cardInformation.Split(':', '|');
 
-                    var winningNumbers = cardParts[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
-                    var numberYouHave = cardParts[2].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+                    var winningNumbers = cardParts[1]
+                        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(int.Parse)
+                        .ToArray();
+                    var numberYouHave = cardParts[2]
+                        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(int.Parse)
+                        .ToArray();
 
                     return new ScratchCard(winningNumbers, numberYouHave);
                 });
@@ -56,10 +86,18 @@ public class Table
 
 public class ScratchCard
 {
+    private readonly int[] numbersYouHave;
+    private readonly int[] winningNumbers;
+
     public ScratchCard(int[] winningNumbers, int[] numbersYouHave)
     {
+        this.winningNumbers = winningNumbers;
+        this.numbersYouHave = numbersYouHave;
     }
 
     public int GetPoints()
-        => 0;
+    {
+        var matches = winningNumbers.Intersect(numbersYouHave).Count();
+        return (int)Math.Pow(2, matches - 1);
+    }
 }
