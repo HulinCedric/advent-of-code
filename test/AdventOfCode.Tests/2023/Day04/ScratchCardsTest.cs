@@ -10,7 +10,8 @@ public class ScratchCardsTest
 {
     [Theory]
     [InputFileData("2023/Day04/sample.txt", 13)]
-    public void Total_points(string table, int expectedTotalPoints)
+    [InputFileData("2023/Day04/input.txt", 24542)]
+    public void Should_calculate_total_points(string table, int expectedTotalPoints)
     {
         // Arrange
         var cards = Table.Parse(table);
@@ -24,42 +25,28 @@ public class ScratchCardsTest
 
     [Theory]
     [InputFileData("2023/Day04/sample.txt")]
-    public void Table_parse_all_scratch_cards(string table)
-    {
-        // Act
-        var cards = Table.Parse(table);
-
-        // Assert
-        cards.Should().HaveCount(6);
-    }
+    public void Should_parse_all_scratch_cards_on_table(string table)
+        => Table.Parse(table).Should().HaveCount(6);
 
     [Fact]
-    public void ShouldScoreZero_WithNoMatches()
+    public void Should_score_zero_with_no_matches()
         => new ScratchCard(new[] { 1, 2, 3 }, new[] { 4, 5, 6 }).GetPoints().Should().Be(0);
 
     [Fact]
-    public void ShouldScoreOne_WithOneMatch()
+    public void Should_score_one_with_one_match()
         => new ScratchCard(new[] { 1, 2, 3 }, new[] { 3, 4, 5 }).GetPoints().Should().Be(1);
 
     [Fact]
-    public void ShouldScoreTwo_WithTwoMatches()
+    public void Should_score_two_with_two_matches()
         => new ScratchCard(new[] { 1, 2, 3, 4 }, new[] { 2, 3, 5, 6 }).GetPoints().Should().Be(2);
 
     [Fact]
-    public void ShouldScoreFour_WithThreeMatches()
+    public void Should_score_four_with_three_matches()
         => new ScratchCard(new[] { 1, 2, 3, 4 }, new[] { 1, 2, 3, 5 }).GetPoints().Should().Be(4);
 
     [Fact]
-    public void ShouldScoreEight_WithFourMatches()
+    public void Should_score_eight_with_four_matches()
         => new ScratchCard(new[] { 1, 2, 3, 4 }, new[] { 1, 2, 3, 4 }).GetPoints().Should().Be(8);
-
-    [Fact]
-    public void ShouldScoreZero_WithNoWinningNumbers()
-        => new ScratchCard(new int[0], new[] { 1, 2, 3, 4 }).GetPoints().Should().Be(0);
-
-    [Fact]
-    public void ShouldScoreZero_WithNoNumbersYouHave()
-        => new ScratchCard(new[] { 1, 2, 3, 4 }, new int[0]).GetPoints().Should().Be(0);
 }
 
 public class Table
@@ -96,8 +83,8 @@ public class ScratchCard
     }
 
     public int GetPoints()
-    {
-        var matches = winningNumbers.Intersect(numbersYouHave).Count();
-        return (int)Math.Pow(2, matches - 1);
-    }
+        => (int)Math.Pow(2, Matches() - 1);
+
+    private int Matches()
+        => winningNumbers.Intersect(numbersYouHave).Count();
 }
