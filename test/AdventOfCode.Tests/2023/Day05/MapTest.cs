@@ -57,14 +57,14 @@ public class MapTest
 
 public class Map
 {
-    private readonly string destinationCategory;
+    public string DestinationCategory { get; }
     private readonly List<SeedConverter> mapConverters;
-    private readonly string sourceCategory;
+    public string SourceCategory { get; }
 
     public Map(string sourceCategory, string destinationCategory, List<SeedConverter> mapConverters)
     {
-        this.sourceCategory = sourceCategory;
-        this.destinationCategory = destinationCategory;
+        this.SourceCategory = sourceCategory;
+        this.DestinationCategory = destinationCategory;
         this.mapConverters = mapConverters;
     }
 
