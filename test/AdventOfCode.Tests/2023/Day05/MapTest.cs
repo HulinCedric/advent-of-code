@@ -68,7 +68,7 @@ public class Map
         this.mapConverters = mapConverters;
     }
 
-    public int GetDestinationForSource(int source)
+    public long GetDestinationForSource(long source)
     {
         var converter = mapConverters.FirstOrDefault(map => map.IsInRange(source));
 

@@ -10,7 +10,7 @@ public class AlmanacTest
     [Fact]
     public void Should_Get_Lowest_Location()
     {
-        var seeds = new List<int> { 79, 14, 55, 13 };
+        var seeds = new List<long> { 79, 14, 55, 13 };
         var maps = new List<Map>
         {
             new(
@@ -79,17 +79,17 @@ public class AlmanacTest
 public class Almanac
 {
     private readonly Dictionary<string, Map> maps;
-    private readonly List<int> seeds;
+    private readonly List<long> seeds;
 
-    public Almanac(List<int> seeds, List<Map> maps)
+    public Almanac(List<long> seeds, List<Map> maps)
     {
         this.seeds = seeds;
         this.maps = maps.ToDictionary(map => map.DestinationCategory, map => map);
     }
 
-    public int GetLowestLocation()
+    public long GetLowestLocation()
         => seeds.Select(GetTransformedSeed).Min();
 
-    private int GetTransformedSeed(int seed)
+    private long GetTransformedSeed(long seed)
         => maps.Keys.Aggregate(seed, (current, category) => maps[category].GetDestinationForSource(current));
 }
