@@ -11,13 +11,13 @@ public class SeedConverter
         sourceRange = new Range(sourceRangeStart, sourceRangeStart + rangeLength - 1);
     }
 
-    public Range GetDestination(Range source)
+    public Range[] GetDestination(Range source)
     {
         if (IsInRange(source) == false)
-            return source;
+            return new[] { source };
 
         var offset = destinationRange.Start - sourceRange.Start;
-        return new Range(source.Start + offset, source.End + offset);
+        return new[] { new Range(source.Start + offset, source.End + offset) };
     }
 
     public bool IsInRange(Range source)

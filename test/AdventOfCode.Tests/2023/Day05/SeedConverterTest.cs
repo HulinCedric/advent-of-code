@@ -1,3 +1,4 @@
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -5,16 +6,16 @@ namespace AdventOfCode._2023.Day05;
 
 public class SeedConverterTest
 {
+    private readonly SeedConverter converter = new(50, 98, 2);
+
     [Theory]
     [InlineData(98, 50)]
     [InlineData(99, 51)]
     public void Should_map_source_to_destination(int source, int expectedDestination)
     {
-        var converter = new SeedConverter(50, 98, 2);
-
         var destination = converter.GetDestination(source);
 
-        destination.Should().Be(new Range(expectedDestination));
+        destination.Should().BeEquivalentTo(new[] { new Range(expectedDestination) });
     }
 
     [Theory]
@@ -25,11 +26,9 @@ public class SeedConverterTest
         int destinationRangeStart,
         int destinationRangeEnd)
     {
-        var converter = new SeedConverter(50, 98, 2);
-
         var destination = converter.GetDestination(new Range(sourceRangeStart, sourceRangeEnd));
 
-        destination.Should().Be(new Range(destinationRangeStart, destinationRangeEnd));
+        destination.Should().BeEquivalentTo(new[] { new Range(destinationRangeStart, destinationRangeEnd) });
     }
 
     [Theory]
@@ -39,10 +38,22 @@ public class SeedConverterTest
     [InlineData(100, 100)]
     public void Should_Return_Same_Number_When_Source_Not_In_Range(int source, int expectedDestination)
     {
-        var converter = new SeedConverter(50, 98, 2);
-
         var destination = converter.GetDestination(source);
 
-        destination.Should().Be(new Range(expectedDestination));
+        destination.Should().BeEquivalentTo(new[] { new Range(expectedDestination) });
+    }
+
+    [Theory]
+    [InlineData(98, 196, new[] { 50L, 51L }, new[] { 100L, 196L })]
+    public void Should_map_source_range_to_almost_destination_range(
+        int sourceRangeStart,
+        int sourceRangeEnd,
+        params long[][] destinationRangeInfo)
+    {
+        var destinationRange = destinationRangeInfo.Select(d => new Range(d[0], d[1])).ToArray();
+
+        var destination = converter.GetDestination(new Range(sourceRangeStart, sourceRangeEnd));
+
+        destination.Should().BeEquivalentTo(destinationRange);
     }
 }

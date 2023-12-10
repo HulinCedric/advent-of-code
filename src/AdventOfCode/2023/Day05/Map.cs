@@ -24,6 +24,6 @@ public class Map
         if (converter == null)
             return source;
 
-        return converter.GetDestination(source);
+        return converter.GetDestination(source).First();
     }
 }
