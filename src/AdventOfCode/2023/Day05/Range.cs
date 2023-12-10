@@ -61,4 +61,7 @@ public readonly struct Range
             ComplementAfter(other)
         };
     }
+    
+    public override string ToString()
+        => $"{Start} ; {End}";
 }
