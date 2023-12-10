@@ -8,10 +8,8 @@ namespace AdventOfCode._2023.Day06;
 
 public class Test
 {
-    [Theory]
-    [InputFileData("2023/Day06/sample.txt", 288)]
-    //[InputFileData("2023/Day06/input.txt", 288)]
-    public void todoSample(string info, int expected)
+    [Fact]
+    public void todoSample()
     {
         // Arrange
         var races = new[]
@@ -23,7 +21,25 @@ public class Test
 
         var waysToBeatTheRecord = races.Select(r => r.CalculateWaysToWin()).Aggregate(1, (a, b) => a * b);
 
-        waysToBeatTheRecord.Should().Be(expected);
+        waysToBeatTheRecord.Should().Be(288);
+    }
+    
+    [Fact]
+
+    public void todoSolutionPartOne()
+    {
+        // Arrange
+        var races = new[]
+        {
+            new Race(47, 282),
+            new Race(70, 1079),
+            new Race(75, 1147),
+            new Race(66, 1062),
+        };
+
+        var waysToBeatTheRecord = races.Select(r => r.CalculateWaysToWin()).Aggregate(1, (a, b) => a * b);
+
+        waysToBeatTheRecord.Should().Be(281600);
     }
 
     [Theory]
