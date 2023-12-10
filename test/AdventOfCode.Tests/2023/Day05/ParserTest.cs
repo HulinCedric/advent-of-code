@@ -10,9 +10,9 @@ public class ParserTest
     [InputFileData("2023/Day05/input.txt", 510109797)]
     public void Should_Get_Lowest_Location(string almanacInformation, long expectedLowestLocation)
     {
-        var gardener = AlmanacParser.Parse(almanacInformation);
+        var almanac = AlmanacParser.Parse(almanacInformation);
 
-        var lowestLocation = gardener.GetLowestLocation();
+        var lowestLocation = almanac.GetLowestLocation();
 
         lowestLocation.Should().Be(expectedLowestLocation);
     }
@@ -22,9 +22,9 @@ public class ParserTest
     [InputFileData("2023/Day05/input.txt", 9622622)]
     public void part_two(string almanacInformation, long expectedLowestLocation)
     {
-        var gardener = AlmanacParser.ParseWithRange(almanacInformation);
+        var almanac = AlmanacParser.ParseWithRange(almanacInformation);
 
-        var lowestLocation = gardener.GetLowestLocation();
+        var lowestLocation = almanac.GetLowestLocation();
 
         lowestLocation.Should().Be(expectedLowestLocation);
     }
