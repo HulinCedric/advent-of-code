@@ -2,31 +2,24 @@ namespace AdventOfCode._2023.Day05;
 
 public class SeedConverter
 {
-    private readonly long destinationRangeStart;
-    private readonly long rangeLength;
-    private readonly long sourceRangeStart;
+    private readonly Range destinationRange;
+    private readonly Range sourceRange;
 
     public SeedConverter(long destinationRangeStart, long sourceRangeStart, long rangeLength)
     {
-        this.destinationRangeStart = destinationRangeStart;
-        this.sourceRangeStart = sourceRangeStart;
-        this.rangeLength = rangeLength;
+        destinationRange = new Range(destinationRangeStart, destinationRangeStart + rangeLength);
+        sourceRange = new Range(sourceRangeStart, sourceRangeStart + rangeLength);
     }
-   
-    public bool IsInRange(Range source)
-        => source.Start <= sourceRangeStart + rangeLength &&
-           sourceRangeStart <= source.End;
-    
-    public long GetDestination(long source)
+
+    public Range GetDestination(Range source)
     {
         if (IsInRange(source) == false)
             return source;
 
-        return destinationRangeStart + (source - sourceRangeStart);
+        return new Range(destinationRange.Start + (source.Start - sourceRange.Start));
     }
 
-    public bool IsInRange(long source)
-        => source >= sourceRangeStart &&
-           source < sourceRangeStart + rangeLength;
+    public bool IsInRange(Range source)
+        => source.Start <= sourceRange.End &&
+           sourceRange.Start <= source.End;
 }
-

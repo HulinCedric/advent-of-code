@@ -12,9 +12,9 @@ public class SeedConverterTest
     {
         var converter = new SeedConverter(50, 98, 2);
 
-        var destination = converter.GetDestination(source);
+        var destination = converter.GetDestination(new Range(source));
 
-        destination.Should().Be(expectedDestination);
+        destination.Should().Be(new Range(expectedDestination));
     }
 
     [Theory]
@@ -25,8 +25,8 @@ public class SeedConverterTest
     {
         var converter = new SeedConverter(50, 98, 2);
 
-        var destination = converter.GetDestination(source);
+        var destination = converter.GetDestination(new Range(source));
 
-        destination.Should().Be(expectedDestination);
+        destination.Should().Be(new Range(expectedDestination));
     }
 }
