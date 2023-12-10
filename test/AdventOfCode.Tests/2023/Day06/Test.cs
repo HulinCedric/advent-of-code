@@ -25,7 +25,6 @@ public class Test
     }
     
     [Fact]
-
     public void todoSolutionPartOne()
     {
         // Arrange
@@ -40,6 +39,35 @@ public class Test
         var waysToBeatTheRecord = races.Select(r => r.CalculateWaysToWin()).Aggregate(1, (a, b) => a * b);
 
         waysToBeatTheRecord.Should().Be(281600);
+    }
+    
+    
+    [Fact]
+    public void todoSamplePartTwo()
+    {
+        // Arrange
+        var races = new[]
+        {
+            new Race(71530, 940200),
+        };
+
+        var waysToBeatTheRecord = races.Select(r => r.CalculateWaysToWin()).Aggregate(1, (a, b) => a * b);
+
+        waysToBeatTheRecord.Should().Be(71503);
+    }
+    
+    [Fact]
+    public void todoSolutionPartTwo()
+    {
+        // Arrange
+        var races = new[]
+        {
+            new Race(47_70_75_66, 282_1079_1147_1062),
+        };
+
+        var waysToBeatTheRecord = races.Select(r => r.CalculateWaysToWin()).Aggregate(1, (a, b) => a * b);
+
+        waysToBeatTheRecord.Should().Be(33_875_953);
     }
 
     [Theory]
@@ -97,7 +125,7 @@ public class Test
             .Be(waysToWin);
 }
 
-public record Race(int Time, int Distance)
+public record Race(int Time, long Distance)
 {
     public int CalculateWaysToWin()
     {
@@ -129,7 +157,7 @@ public class Boat
         Distance = 0;
     }
 
-    public int Distance { get; private set; }
+    public long Distance { get; private set; }
 
     public int Speed { get; private set; }
 
@@ -138,7 +166,7 @@ public class Boat
         => Speed = (int)time.TotalMilliseconds;
 
     public void Move(TimeSpan time)
-        => Distance += Speed * (int)time.TotalMilliseconds;
+        => Distance += Speed * (long)time.TotalMilliseconds;
 }
 
 public static class LangExtensions
