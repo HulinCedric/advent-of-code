@@ -19,7 +19,7 @@ public class ParserTest
 
     [Theory]
     [InputFileData("2023/Day05/sample.txt", 46)]
-    [InputFileData("2023/Day05/input.txt", 46)]
+    [InputFileData("2023/Day05/input.txt", 9622622)]
     public void part_two(string almanacInformation, long expectedLowestLocation)
     {
         var gardener = AlmanacParser.Parse_Two(almanacInformation);

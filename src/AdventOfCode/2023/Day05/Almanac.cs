@@ -15,8 +15,15 @@ public class Almanac
     }
 
     public long GetLowestLocation()
-        => seeds.Select(r => r).Select(GetTransformedSeed).Select(r => r.Start).Min();
+        => seeds
+            .SelectMany(SeedLocations)
+            .Select(r => r.Start)
+            .Min();
 
-    private Range GetTransformedSeed(Range seed)
-        => maps.Keys.Aggregate(seed, (current, category) => maps[category].GetDestinationForSource(current));
+    private List<Range> SeedLocations(Range seed)
+        => maps.Values
+            .Aggregate(
+                (IEnumerable<Range>)new List<Range> { seed },
+                (locations, map) => locations.SelectMany(map.GetDestinations))
+            .ToList();
 }

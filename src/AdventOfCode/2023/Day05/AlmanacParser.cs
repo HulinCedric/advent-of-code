@@ -17,7 +17,7 @@ public static class AlmanacParser
         => almanacSeedPart
             .Split(new[] { ':', ' ' }, StringSplitOptions.RemoveEmptyEntries)
             .Skip(1)
-            .Select(Range.Parse)
+            .Select(seed => new Range(long.Parse(seed)))
             .ToList();
 
     private static List<Map> ParseMaps(IEnumerable<string> mapsParts)
