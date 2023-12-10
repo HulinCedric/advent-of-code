@@ -17,13 +17,13 @@ public class Map
         this.mapConverters = mapConverters;
     }
 
-    public long GetDestinationForSource(long source)
+    public Range GetDestinationForSource(Range source)
     {
         var converter = mapConverters.FirstOrDefault(map => map.IsInRange(source));
 
         if (converter == null)
             return source;
 
-        return converter.GetDestination(new Range(source)).Start;
+        return converter.GetDestination(source);
     }
 }

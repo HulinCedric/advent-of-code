@@ -29,7 +29,7 @@ public class MapTest
 
         var destination = map.GetDestinationForSource(source);
 
-        destination.Should().Be(expectedDestination);
+        destination.Should().Be(new Range(expectedDestination));
     }
 
     [Theory]
@@ -49,6 +49,6 @@ public class MapTest
 
         var destination = map.GetDestinationForSource(source);
 
-        destination.Should().Be(expectedDestination);
+        destination.Should().Be(new Range(expectedDestination));
     }
 }
