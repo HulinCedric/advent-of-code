@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -7,6 +5,14 @@ namespace AdventOfCode._2023.Day05;
 
 public class MapTest
 {
+    private readonly Map map = new(
+        "seed",
+        "soil",
+        [
+            new SeedConverter(50, 98, 2),
+            new SeedConverter(52, 50, 48)
+        ]);
+
     [Theory]
     [InlineData(0, 0)]
     [InlineData(1, 1)]
@@ -21,17 +27,9 @@ public class MapTest
     [InlineData(100, 100)]
     public void Should_map_source_to_destination_across_ranges(int source, int expectedDestination)
     {
-        var map = new Map(
-            "seed",
-            "soil",
-            [
-                new SeedConverter(50, 98, 2),
-                new SeedConverter(52, 50, 48)
-            ]);
+        var destination = map.GetDestinations(source);
 
-        var destination = map.GetDestinationForSource(source);
-
-        destination.Should().Be(expectedDestination);
+        destination.Should().BeEquivalentTo(new[] { new Range(expectedDestination) });
     }
 
     [Theory]
@@ -41,40 +39,22 @@ public class MapTest
     [InlineData(13, 13)]
     public void Should_map_seed_to_soil(int source, int expectedDestination)
     {
-        var map = new Map(
-            "seed",
-            "soil",
-            [
-                new SeedConverter(50, 98, 2),
-                new SeedConverter(52, 50, 48)
-            ]);
+        var destination = map.GetDestinations(source);
 
-        var destination = map.GetDestinationForSource(source);
-
-        destination.Should().Be(expectedDestination);
-    }
-}
-
-public class Map
-{
-    public string DestinationCategory { get; }
-    private readonly List<SeedConverter> mapConverters;
-    public string SourceCategory { get; }
-
-    public Map(string sourceCategory, string destinationCategory, List<SeedConverter> mapConverters)
-    {
-        this.SourceCategory = sourceCategory;
-        this.DestinationCategory = destinationCategory;
-        this.mapConverters = mapConverters;
+        destination.Should().BeEquivalentTo(new[] { new Range(expectedDestination) });
     }
 
-    public long GetDestinationForSource(long source)
+    [Theory]
+    [InlineData(79, 92, 81, 94)]
+    [InlineData(55, 67, 57, 69)]
+    public void Should_map_seed_range_to_soil(
+        int sourceRangeStart,
+        int sourceRangeEnd,
+        int destinationRangeStart,
+        int destinationRangeEnd)
     {
-        var converter = mapConverters.FirstOrDefault(map => map.IsInRange(source));
+        var destination = map.GetDestinations(new Range(sourceRangeStart, sourceRangeEnd));
 
-        if (converter == null)
-            return source;
-
-        return converter.GetDestination(source);
+        destination.Should().BeEquivalentTo(new[] { new Range(destinationRangeStart, destinationRangeEnd) });
     }
 }
