@@ -54,7 +54,7 @@ public static class AlmanacParser
         var seedParts = almanacSeedPart
             .Split(new[] { ':', ' ' }, StringSplitOptions.RemoveEmptyEntries)
             .Skip(1)
-            .Select(int.Parse)
+            .Select(long.Parse)
             .ToList();
 
         var seeds = new List<Range>();
@@ -62,8 +62,7 @@ public static class AlmanacParser
         {
             var start = seedParts[i];
             var length = seedParts[i + 1];
-            // seeds.Add(new Range(start, start+length));
-            seeds.AddRange(Enumerable.Range(start, length).Select(v => new Range(v)));
+            seeds.Add(new Range(start, start + length - 1));
         }
 
         return seeds;
