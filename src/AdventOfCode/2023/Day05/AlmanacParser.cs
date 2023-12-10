@@ -8,10 +8,23 @@ public static class AlmanacParser
 {
     public static Almanac Parse(string almanacInformation)
     {
-        var almanacParts = almanacInformation.Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
+        var almanacParts = AlmanacParts(almanacInformation);
 
-        return new Almanac(ParseSeeds(almanacParts[0]), ParseMaps(almanacParts.Skip(1)));
+        return AlmanacWith(almanacParts, ParseSeeds(almanacParts[0]));
     }
+
+    public static Almanac ParseWithRange(string almanacInformation)
+    {
+        var almanacParts = AlmanacParts(almanacInformation);
+
+        return AlmanacWith(almanacParts, ParseSeedsWithRange(almanacParts[0]));
+    }
+
+    private static string[] AlmanacParts(string almanacInformation)
+        => almanacInformation.Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
+
+    private static Almanac AlmanacWith(string[] almanacParts, List<Range> seeds)
+        => new(seeds, ParseMaps(almanacParts.Skip(1)));
 
     private static List<Range> ParseSeeds(string almanacSeedPart)
         => almanacSeedPart
@@ -20,51 +33,27 @@ public static class AlmanacParser
             .Select(seed => new Range(long.Parse(seed)))
             .ToList();
 
+    private static List<Range> ParseSeedsWithRange(string almanacSeedPart)
+        => almanacSeedPart
+            .Split(new[] { ':', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+            .Skip(1)
+            .Select(long.Parse)
+            .Chunk(2)
+            .Select(pair => (start: pair[0], length: pair[1]))
+            .Select(pair => new Range(pair.start, pair.start + pair.length - 1))
+            .ToList();
+
     private static List<Map> ParseMaps(IEnumerable<string> mapsParts)
-    {
-        var maps = new List<Map>();
-        foreach (var mapPart in mapsParts)
-        {
-            var lines = mapPart.Split("\n", StringSplitOptions.RemoveEmptyEntries);
-
-            var categories = lines[0].Split("-to-");
-            var sourceCategory = categories[0];
-            var destinationCategory = categories[1].Replace(" map:", "");
-
-            maps.Add(new Map(sourceCategory, destinationCategory, ParseSeedConverters(lines.Skip(1))));
-        }
-
-        return maps;
-    }
+        => (from mapPart in mapsParts
+            select mapPart.Split("\n", StringSplitOptions.RemoveEmptyEntries)
+            into lines
+            let categories = lines[0].Split("-to-")
+            let sourceCategory = categories[0]
+            let destinationCategory = categories[1].Replace(" map:", "")
+            select new Map(sourceCategory, destinationCategory, ParseSeedConverters(lines.Skip(1)))).ToList();
 
     private static List<SeedConverter> ParseSeedConverters(IEnumerable<string> lines)
         => lines.Select(line => line.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToArray())
             .Select(values => new SeedConverter(values[0], values[1], values[2]))
             .ToList();
-
-    public static Almanac Parse_Two(string almanacInformation)
-    {
-        var almanacParts = almanacInformation.Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
-
-        return new Almanac(ParseSeeds_Two(almanacParts[0]), ParseMaps(almanacParts.Skip(1)));
-    }
-
-    private static List<Range> ParseSeeds_Two(string almanacSeedPart)
-    {
-        var seedParts = almanacSeedPart
-            .Split(new[] { ':', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-            .Skip(1)
-            .Select(long.Parse)
-            .ToList();
-
-        var seeds = new List<Range>();
-        for (var i = 0; i < seedParts.Count; i += 2)
-        {
-            var start = seedParts[i];
-            var length = seedParts[i + 1];
-            seeds.Add(new Range(start, start + length - 1));
-        }
-
-        return seeds;
-    }
 }

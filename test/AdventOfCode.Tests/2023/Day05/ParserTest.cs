@@ -22,7 +22,7 @@ public class ParserTest
     [InputFileData("2023/Day05/input.txt", 9622622)]
     public void part_two(string almanacInformation, long expectedLowestLocation)
     {
-        var gardener = AlmanacParser.Parse_Two(almanacInformation);
+        var gardener = AlmanacParser.ParseWithRange(almanacInformation);
 
         var lowestLocation = gardener.GetLowestLocation();
 
