@@ -7,8 +7,8 @@ public class SeedConverter
 
     public SeedConverter(long destinationRangeStart, long sourceRangeStart, long rangeLength)
     {
-        destinationRange = new Range(destinationRangeStart, destinationRangeStart + rangeLength);
-        sourceRange = new Range(sourceRangeStart, sourceRangeStart + rangeLength);
+        destinationRange = new Range(destinationRangeStart, destinationRangeStart + rangeLength - 1);
+        sourceRange = new Range(sourceRangeStart, sourceRangeStart + rangeLength - 1);
     }
 
     public Range GetDestination(Range source)

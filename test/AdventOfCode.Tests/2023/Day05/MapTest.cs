@@ -16,7 +16,7 @@ public class MapTest
     [InlineData(97, 99)]
     [InlineData(98, 50)]
     [InlineData(99, 51)]
-    [InlineData(100, 52)]
+    [InlineData(100, 100)]
     public void Should_map_source_to_destination_across_ranges(int source, int expectedDestination)
     {
         var map = new Map(

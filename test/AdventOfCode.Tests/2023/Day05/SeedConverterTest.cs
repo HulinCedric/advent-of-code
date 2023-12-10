@@ -8,7 +8,6 @@ public class SeedConverterTest
     [Theory]
     [InlineData(98, 50)]
     [InlineData(99, 51)]
-    [InlineData(100, 52)]
     public void Should_map_source_to_destination(int source, int expectedDestination)
     {
         var converter = new SeedConverter(50, 98, 2);
@@ -37,6 +36,7 @@ public class SeedConverterTest
     [InlineData(0, 0)]
     [InlineData(1, 1)]
     [InlineData(48, 48)]
+    [InlineData(100, 100)]
     public void Should_Return_Same_Number_When_Source_Not_In_Range(int source, int expectedDestination)
     {
         var converter = new SeedConverter(50, 98, 2);
