@@ -11,16 +11,23 @@ public class SeedConverter
         sourceRange = new Range(sourceRangeStart, sourceRangeStart + rangeLength - 1);
     }
 
-    public Range[] GetDestination(Range source)
-    {
-        if (IsInRange(source) == false)
-            return new[] { source };
+    public bool DoesIntersect(Range seed)
+        => sourceRange.DoesIntersect(seed);
 
+    public Range GetDestination(Range seed)
+        => IsSubsetOf(seed) ?
+               Map(seed) :
+               seed;
+
+    private bool IsSubsetOf(Range seed)
+        => sourceRange.IsSubsetOf(seed);
+
+    private Range Map(Range seed)
+    {
         var offset = destinationRange.Start - sourceRange.Start;
-        return new[] { new Range(source.Start + offset, source.End + offset) };
+        return new Range(seed.Start + offset, seed.End + offset);
     }
 
-    public bool IsInRange(Range source)
-        => source.Start <= sourceRange.End &&
-           sourceRange.Start <= source.End;
+    public Range[] DifferenceWith(Range seed)
+        => sourceRange.DifferenceWith(seed);
 }

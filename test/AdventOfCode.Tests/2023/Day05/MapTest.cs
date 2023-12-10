@@ -27,9 +27,9 @@ public class MapTest
                 new SeedConverter(52, 50, 48)
             ]);
 
-        var destination = map.GetDestinationForSource(source);
+        var destination = map.GetDestinations(source);
 
-        destination.Should().Be(new Range(expectedDestination));
+        destination.Should().BeEquivalentTo(new[] { new Range(expectedDestination) });
     }
 
     [Theory]
@@ -47,8 +47,8 @@ public class MapTest
                 new SeedConverter(52, 50, 48)
             ]);
 
-        var destination = map.GetDestinationForSource(source);
+        var destination = map.GetDestinations(source);
 
-        destination.Should().Be(new Range(expectedDestination));
+        destination.Should().BeEquivalentTo(new[] { new Range(expectedDestination) });
     }
 }

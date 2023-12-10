@@ -1,4 +1,3 @@
-using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -15,7 +14,7 @@ public class SeedConverterTest
     {
         var destination = converter.GetDestination(source);
 
-        destination.Should().BeEquivalentTo(new[] { new Range(expectedDestination) });
+        destination.Should().Be(new Range(expectedDestination));
     }
 
     [Theory]
@@ -28,7 +27,7 @@ public class SeedConverterTest
     {
         var destination = converter.GetDestination(new Range(sourceRangeStart, sourceRangeEnd));
 
-        destination.Should().BeEquivalentTo(new[] { new Range(destinationRangeStart, destinationRangeEnd) });
+        destination.Should().Be(new Range(destinationRangeStart, destinationRangeEnd));
     }
 
     [Theory]
@@ -40,20 +39,19 @@ public class SeedConverterTest
     {
         var destination = converter.GetDestination(source);
 
-        destination.Should().BeEquivalentTo(new[] { new Range(expectedDestination) });
+        destination.Should().Be(new Range(expectedDestination));
     }
 
     [Theory]
-    [InlineData(98, 196, new[] { 50L, 51L }, new[] { 100L, 196L })]
-    public void Should_map_source_range_to_almost_destination_range(
+    [InlineData(98, 196, 98L, 196L)]
+    public void Should_return_same_range_when_range_is_not_a_subset(
         int sourceRangeStart,
         int sourceRangeEnd,
-        params long[][] destinationRangeInfo)
+        int destinationRangeStart,
+        int destinationRangeEnd)
     {
-        var destinationRange = destinationRangeInfo.Select(d => new Range(d[0], d[1])).ToArray();
-
         var destination = converter.GetDestination(new Range(sourceRangeStart, sourceRangeEnd));
 
-        destination.Should().BeEquivalentTo(destinationRange);
+        destination.Should().Be(new Range(destinationRangeStart, destinationRangeEnd));
     }
 }
