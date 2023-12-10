@@ -16,10 +16,11 @@ public class SeedConverter
         if (IsInRange(source) == false)
             return source;
 
-        return new Range(destinationRange.Start + (source.Start - sourceRange.Start));
+        var offset = destinationRange.Start - sourceRange.Start;
+        return new Range(source.Start + offset, source.End + offset);
     }
 
     public bool IsInRange(Range source)
-        => source.Start < sourceRange.End &&
+        => source.Start <= sourceRange.End &&
            sourceRange.Start <= source.End;
 }
