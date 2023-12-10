@@ -20,6 +20,6 @@ public class SeedConverter
     }
 
     public bool IsInRange(Range source)
-        => source.Start <= sourceRange.End &&
+        => source.Start < sourceRange.End &&
            sourceRange.Start <= source.End;
 }
