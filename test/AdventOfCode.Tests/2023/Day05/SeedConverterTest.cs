@@ -18,7 +18,7 @@ public class SeedConverterTest
     }
 
     [Theory]
-    [InlineData(98, 100, 50, 52)]
+    [InlineData(98, 99, 50, 51)]
     public void Should_map_source_range_to_destination_range(
         int sourceRangeStart,
         int sourceRangeEnd,
