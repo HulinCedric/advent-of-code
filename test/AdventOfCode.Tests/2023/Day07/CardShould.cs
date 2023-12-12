@@ -28,6 +28,8 @@ public class CardShould
 
 public readonly record struct Card : IComparable<Card>
 {
+    internal const int StrongestValue = 14;
+
     private static readonly IDictionary<char, int> LabelStrength = new Dictionary<char, int>
     {
         { '2', 2 },
@@ -61,6 +63,9 @@ public readonly record struct Card : IComparable<Card>
 
     public static Card Parse(string label)
         => new(label[0]);
+
+    public static Card Parse(char label)
+        => new(label);
 
     public override string ToString()
         => $"{Label}";
