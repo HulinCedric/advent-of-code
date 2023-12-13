@@ -27,4 +27,25 @@ public class HauntedWastelandShould
         // Assert
         steps.Should().Be(expectedSteps);
     }
+    
+    [Theory]
+    [InputFileData("2023/Day08/sample3.txt", 6)]
+    public void ReachZZZInExpectedSteps_two(string mapDocument, int expectedSteps)
+    {
+        // Arrange
+        var (instructions, network) = MapParser.Parse(mapDocument);
+
+        // Act
+        var location = "A";
+        var steps = 0;
+        while (location != "Z")
+        {
+            var (left, right) = network[location];
+            location = instructions[steps % instructions.Length] == 'R' ? right : left;
+            steps++;
+        }
+
+        // Assert
+        steps.Should().Be(expectedSteps);
+    }
 }
