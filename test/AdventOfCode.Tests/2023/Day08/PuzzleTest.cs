@@ -8,6 +8,7 @@ public class HauntedWastelandShould
     [Theory]
     [InputFileData("2023/Day08/sample1.txt", 2)]
     [InputFileData("2023/Day08/sample2.txt", 6)]
+    [InputFileData("2023/Day08/input.txt", 20221)]
     public void ReachZZZInExpectedSteps(string mapDocument, int expectedSteps)
     {
         // Arrange
