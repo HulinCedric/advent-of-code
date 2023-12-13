@@ -3,7 +3,7 @@ using Xunit;
 
 namespace AdventOfCode._2023.Day05;
 
-public class ParserTest
+public class ParserWithJAsJackTest
 {
     [Theory]
     [InputFileData("2023/Day05/sample.txt", 35)]

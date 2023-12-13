@@ -19,7 +19,7 @@ public class PartOneTest
     private static IEnumerable<int> OrderBidsByHandStrength(string input)
         => from handAndBid in input.Split("\n")
            let part = handAndBid.Split(" ")
-           let hand = Hand.Parse(part[0])
+           let hand = ParserWithJAsJack.Parse(part[0])
            let bid = int.Parse(part[1])
            orderby hand
            select bid;

@@ -7,7 +7,7 @@ public readonly record struct Card : IComparable<Card>
 {
     internal const int StrongestValue = 14;
 
-    private static readonly IDictionary<char, int> LabelStrength = new Dictionary<char, int>
+    public static readonly IDictionary<char, int> LabelsWithJasJack = new Dictionary<char, int>
     {
         { '2', 2 },
         { '3', 3 },
@@ -24,24 +24,38 @@ public readonly record struct Card : IComparable<Card>
         { 'A', 14 }
     };
 
-    private Card(char label)
+    public static readonly IDictionary<char, int> LabelsWithJasJoker = new Dictionary<char, int>
+    {
+        { 'J', 1 },
+        { '2', 2 },
+        { '3', 3 },
+        { '4', 4 },
+        { '5', 5 },
+        { '6', 6 },
+        { '7', 7 },
+        { '8', 8 },
+        { '9', 9 },
+        { 'T', 10 },
+        { 'Q', 11 },
+        { 'K', 12 },
+        { 'A', 13 }
+    };
+    
+    private Card(char label, int strength)
     {
         Label = label;
-        Value = LabelStrength[label];
+        Strength = strength;
     }
 
     public char Label { get; }
 
-    public int Value { get; }
+    public int Strength { get; }
 
     public int CompareTo(Card other)
-        => Value.CompareTo(other.Value);
+        => Strength.CompareTo(other.Strength);
 
-    public static Card Parse(string label)
-        => new(label[0]);
-
-    public static Card Parse(char label)
-        => new(label);
+    public static Card Parse(char label, int strength)
+        => new(label, strength);
 
     public override string ToString()
         => $"{Label}";

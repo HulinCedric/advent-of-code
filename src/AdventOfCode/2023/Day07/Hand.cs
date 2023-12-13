@@ -20,7 +20,7 @@ public class Hand : IComparable<Hand>
 
     private readonly List<Card> cards;
 
-    private Hand(List<Card> cards)
+    internal Hand(List<Card> cards)
     {
         this.cards = cards;
         Value = ComputeHandValue(cards, HandTypes);
@@ -30,9 +30,6 @@ public class Hand : IComparable<Hand>
 
     public int CompareTo(Hand? opponent)
         => opponent is null ? 1 : Value.CompareTo(opponent.Value);
-
-    public static Hand Parse(string hand)
-        => new(hand.ToCharArray().Select(Card.Parse).ToList());
 
     private static HandValue ComputeHandValue(List<Card> cards, IList<IHandType> handTypes)
     {
