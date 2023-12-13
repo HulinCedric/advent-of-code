@@ -14,14 +14,14 @@ public static class Parser
            orderby hand
            select bid;
 
-    internal static List<Card> Cards(string hand, IDictionary<char, int> labels)
-        => hand.ToCharArray().Select(c => Card.Parse(c, labels[c])).ToList();
+    internal static List<Card> ParseCards(string hand, IDictionary<char, int> labelStrengths)
+        => hand.ToCharArray().Select(c => Card.Parse(c, labelStrengths)).ToList();
 }
 
 public static class HandParserWithJAsJack
 {
     public static Hand Parse(string hand)
-        => new(Parser.Cards(hand, Card.LabelsWithJasJack));
+        => new(Parser.ParseCards(hand, Card.LabelsWithJasJack));
 }
 
 public static class HandParserWithJAsJoker
@@ -29,7 +29,7 @@ public static class HandParserWithJAsJoker
     public static Hand Parse(string hand)
     {
         var labelStrengths = Card.LabelsWithJasJoker;
-        
+
         var originalCards = OriginalCards(hand, labelStrengths);
 
         var possibleJokerHandsCards = JokerPossibleHandsCards(hand, labelStrengths);
@@ -40,15 +40,16 @@ public static class HandParserWithJAsJoker
     }
 
     private static List<Card> OriginalCards(string hand, IDictionary<char, int> labelStrengths)
-        => Parser.Cards(hand, labelStrengths);
+        => Parser.ParseCards(hand, labelStrengths);
 
-    private static IEnumerable<List<Card>> JokerPossibleHandsCards(
+    private static List<List<Card>> JokerPossibleHandsCards(
         string hand,
         IDictionary<char, int> labelStrengths)
         => labelStrengths.Keys
             .Select(ch => hand.Replace(Card.JokerLabel, ch))
             .Select(
                 substitute => substitute.ToCharArray()
-                    .Select(label => Card.Parse(label, labelStrengths[label]))
-                    .ToList());
+                    .Select(label => Card.Parse(label, labelStrengths))
+                    .ToList())
+            .ToList();
 }

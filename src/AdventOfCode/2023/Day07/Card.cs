@@ -55,8 +55,8 @@ public readonly record struct Card : IComparable<Card>
     public int CompareTo(Card other)
         => Strength.CompareTo(other.Strength);
 
-    public static Card Parse(char label, int strength)
-        => new(label, strength);
+    public static Card Parse(char label, IDictionary<char, int> labelStrengths)
+        => new(label, labelStrengths[label]);
 
     public override string ToString()
         => $"{Label}";
