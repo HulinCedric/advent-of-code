@@ -2,9 +2,6 @@
 
 public readonly record struct HandValue
 {
-    private readonly long handOrderingStrength;
-    private readonly int handTypeStrength;
-
     /// <summary>
     ///     <para>
     ///         Hand value is a number composed of hand type strength and the hand ordering strength. Each component value in
@@ -18,19 +15,14 @@ public readonly record struct HandValue
     ///     <code>HandValue(5, 1234567)</code>
     ///     Resulting in: 5_1234567
     /// </example>
-    public HandValue(int handTypeStrength, long handOrderingStrength)
-    {
-        this.handTypeStrength = handTypeStrength;
-        this.handOrderingStrength = handOrderingStrength;
+    public HandValue(int handTypeStrength, int handOrderingStrength)
+        => Value = (handTypeStrength, handOrderingStrength);
 
-        Value = (handTypeStrength, handOrderingStrength);
-    }
-
-    private (int, long) Value { get; }
+    private (int, int) Value { get; }
 
     public int CompareTo(HandValue opponent)
         => Value.CompareTo(opponent.Value);
 
     public override string ToString()
-        => $"{handTypeStrength} : {handOrderingStrength} = {Value}";
+        => $"{Value}";
 }

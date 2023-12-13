@@ -24,7 +24,6 @@ public readonly record struct Card : IComparable<Card>
         { 'A', 14 }
     };
 
-
     private Card(char label)
     {
         Label = label;
