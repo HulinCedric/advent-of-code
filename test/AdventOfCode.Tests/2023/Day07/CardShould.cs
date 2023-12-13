@@ -18,8 +18,8 @@ public class CardShould
     [InlineData("J", "Q")]
     [InlineData("Q", "K")]
     [InlineData("K", "A")]
-    public void Be_weakest_than(
-        string firstCardLabel,
-        string secondCardLabel)
-        => Card.Parse(firstCardLabel).Should().BeLessThan(Card.Parse(secondCardLabel));
+    public void Be_weakest_than(string firstCardLabel, string secondCardLabel)
+        => Card.Parse(firstCardLabel)
+            .Should()
+            .BeLessThan(Card.Parse(secondCardLabel));
 }

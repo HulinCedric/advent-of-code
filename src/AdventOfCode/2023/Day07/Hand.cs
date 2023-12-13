@@ -18,8 +18,13 @@ public class Hand : IComparable<Hand>
         new FiveOfKinds()
     ];
 
+    private readonly List<Card> cards;
+
     private Hand(List<Card> cards)
-        => Value = ComputeHandValue(cards, HandTypes);
+    {
+        this.cards = cards;
+        Value = ComputeHandValue(cards, HandTypes);
+    }
 
     private HandValue Value { get; }
 
@@ -35,4 +40,7 @@ public class Hand : IComparable<Hand>
         var handOrderingStrength = cards.OrderingStrength();
         return new HandValue(handTypeStrength, handOrderingStrength);
     }
+    
+    public override string ToString()
+        => $"{string.Join(" ", cards)} : {Value}";
 }
