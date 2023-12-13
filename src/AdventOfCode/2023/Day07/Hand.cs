@@ -20,10 +20,17 @@ public class Hand : IComparable<Hand>
 
     private readonly List<Card> cards;
 
-    internal Hand(List<Card> cards)
+
+    public Hand(List<Card> cards)
     {
         this.cards = cards;
-        Value = ComputeHandValue(cards, HandTypes);
+        Value = ComputeHandValue(cards, cards, HandTypes);
+    }
+
+    public Hand(List<Card> originalCards, List<Card> handTypeCards)
+    {
+        cards = originalCards;
+        Value = ComputeHandValue(originalCards, handTypeCards, HandTypes);
     }
 
     private HandValue Value { get; }
@@ -31,10 +38,13 @@ public class Hand : IComparable<Hand>
     public int CompareTo(Hand? opponent)
         => opponent is null ? 1 : Value.CompareTo(opponent.Value);
 
-    private static HandValue ComputeHandValue(List<Card> cards, IList<IHandType> handTypes)
+    private static HandValue ComputeHandValue(
+        List<Card> originalCards,
+        List<Card> handTypeCards,
+        IList<IHandType> handTypes)
     {
-        var handTypeStrength = cards.TypeStrength(handTypes);
-        var handOrderingStrength = cards.OrderingStrength();
+        var handTypeStrength = handTypeCards.TypeStrength(handTypes);
+        var handOrderingStrength = originalCards.OrderingStrength();
         return new HandValue(handTypeStrength, handOrderingStrength);
     }
     

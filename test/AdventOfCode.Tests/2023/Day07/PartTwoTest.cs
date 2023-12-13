@@ -19,13 +19,25 @@ public class PartTwoTest
     private static IEnumerable<int> OrderBidsByHandStrength(string input)
         => from line in input.Split("\n")
            let part = line.Split(" ")
-           let hand = StrongestHand(part)
+           let hand = StrongestHand(part[0])
            let bid = int.Parse(part[1])
            orderby hand
            select bid;
 
-    private static Hand? StrongestHand(string[] part)
+    private static Hand StrongestHand(string hand)
+    {
+        var originalCards = hand.ToCharArray().Select(c => Card.Parse(c, Card.LabelsWithJasJoker[c])).ToList();
+        var possibleJokerHand = HandTypeCards(hand);
+        return possibleJokerHand
+            .Select(jokerHand => new Hand(originalCards, jokerHand))
+            .Max()!;
+    }
+
+    private static IEnumerable<List<Card>> HandTypeCards(string hand)
         => Card.LabelsWithJasJoker.Keys
-            .Select(ch => ParserWithJAsJoker.Parse(part[0].Replace('J', ch)))
-            .Max();
+            .Select(ch => hand.Replace('J', ch))
+            .Select(
+                substituedHand => substituedHand.ToCharArray()
+                    .Select(c => Card.Parse(c, Card.LabelsWithJasJoker[c]))
+                    .ToList());
 }
