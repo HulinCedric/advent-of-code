@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using AdventOfCode._2023.Day07.HandTypes;
 
 namespace AdventOfCode._2023.Day07;
@@ -39,15 +38,15 @@ public class Hand : IComparable<Hand>
         => opponent is null ? 1 : Value.CompareTo(opponent.Value);
 
     private static HandValue ComputeHandValue(
-        List<Card> originalCards,
-        List<Card> handTypeCards,
+        IEnumerable<Card> originalCards,
+        IEnumerable<Card> handTypeCards,
         IList<IHandType> handTypes)
     {
         var handTypeStrength = handTypeCards.TypeStrength(handTypes);
         var handOrderingStrength = originalCards.OrderingStrength();
         return new HandValue(handTypeStrength, handOrderingStrength);
     }
-    
+
     public override string ToString()
         => $"{string.Join(" ", cards)} : {Value}";
 }

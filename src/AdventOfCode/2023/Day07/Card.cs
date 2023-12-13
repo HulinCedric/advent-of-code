@@ -6,6 +6,7 @@ namespace AdventOfCode._2023.Day07;
 public readonly record struct Card : IComparable<Card>
 {
     internal const int StrongestValue = 14;
+    internal const char JokerLabel = 'J';
 
     public static readonly IDictionary<char, int> LabelsWithJasJack = new Dictionary<char, int>
     {
