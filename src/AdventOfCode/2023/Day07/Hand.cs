@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using AdventOfCode._2023.Day07.HandTypes;
 
 namespace AdventOfCode._2023.Day07;
@@ -20,10 +19,17 @@ public class Hand : IComparable<Hand>
 
     private readonly List<Card> cards;
 
-    private Hand(List<Card> cards)
+
+    public Hand(List<Card> cards)
     {
         this.cards = cards;
-        Value = ComputeHandValue(cards, HandTypes);
+        Value = ComputeHandValue(cards, cards, HandTypes);
+    }
+
+    public Hand(List<Card> originalCards, List<Card> handTypeCards)
+    {
+        cards = originalCards;
+        Value = ComputeHandValue(originalCards, handTypeCards, HandTypes);
     }
 
     private HandValue Value { get; }
@@ -31,16 +37,16 @@ public class Hand : IComparable<Hand>
     public int CompareTo(Hand? opponent)
         => opponent is null ? 1 : Value.CompareTo(opponent.Value);
 
-    public static Hand Parse(string hand)
-        => new(hand.ToCharArray().Select(Card.Parse).ToList());
-
-    private static HandValue ComputeHandValue(List<Card> cards, IList<IHandType> handTypes)
+    private static HandValue ComputeHandValue(
+        IEnumerable<Card> originalCards,
+        IEnumerable<Card> handTypeCards,
+        IList<IHandType> handTypes)
     {
-        var handTypeStrength = cards.TypeStrength(handTypes);
-        var handOrderingStrength = cards.OrderingStrength();
+        var handTypeStrength = handTypeCards.TypeStrength(handTypes);
+        var handOrderingStrength = originalCards.OrderingStrength();
         return new HandValue(handTypeStrength, handOrderingStrength);
     }
-    
+
     public override string ToString()
         => $"{string.Join(" ", cards)} : {Value}";
 }
