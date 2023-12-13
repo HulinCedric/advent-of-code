@@ -36,8 +36,10 @@ public class HandShould
         => Hand.Parse(firstHand).Should().BeLessThan(Hand.Parse(secondHand));
 
     [Theory]
-    [InlineData("33332", "2AAAA")]
-    [InlineData("77888", "77788")]
-    public void CardOrdering(string firstHand, string secondHand)
-        => Hand.Parse(firstHand).Should().BeGreaterThan(Hand.Parse(secondHand));
+    [InlineData("2AAAA", "33332")]
+    [InlineData("77788", "77888")]
+    public void Same_HandType_should_be_compared_by_Ordered_Card_Strength(
+        string strongerHand,
+        string weakerHand)
+        => Hand.Parse(strongerHand).Should().BeLessThan(Hand.Parse(weakerHand));
 }
