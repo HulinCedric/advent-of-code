@@ -15,4 +15,17 @@ public class PuzzleTest
     [InlineData(new long[] { }, new long[] { })]
     public void Get_differences_between_steps(long[] steps, long[] differences)
         => steps.Differences().Should().BeEquivalentTo(differences);
+
+    [Theory]
+    [InputFileData("2023/Day09/sample.txt")]
+    public void Parse_report(string input)
+        => input.ParseReport()
+            .Should()
+            .BeEquivalentTo(
+                new[]
+                {
+                    new long[] { 0, 3, 6, 9, 12, 15 },
+                    new long[] { 1, 3, 6, 10, 15, 21 },
+                    new long[] { 10, 13, 16, 21, 30, 45 }
+                });
 }
