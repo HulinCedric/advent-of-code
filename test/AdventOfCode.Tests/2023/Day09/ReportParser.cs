@@ -4,9 +4,9 @@ namespace AdventOfCode._2023.Day09;
 
 public static class ReportParser
 {
-    public static long[][] ParseReport(this string report)
+    public static int[][] ParseReport(this string report)
         => report.Split('\n').Select(ParseStepHistory).ToArray();
 
-    private static long[] ParseStepHistory(this string stepHistory)
-        => stepHistory.Split(' ').Select(long.Parse).ToArray();
+    private static int[] ParseStepHistory(this string stepHistory)
+        => stepHistory.Split(' ').Select(int.Parse).ToArray();
 }

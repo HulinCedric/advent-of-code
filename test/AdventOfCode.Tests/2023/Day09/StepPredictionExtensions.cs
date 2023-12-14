@@ -4,7 +4,7 @@ namespace AdventOfCode._2023.Day09;
 
 public static class StepPredictionExtensions
 {
-    public static long ExtrapolateNextStep(this long[] steps)
+    public static int ExtrapolateNextStep(this int[] steps)
     {
         if (steps.All(step => step == 0))
         {
