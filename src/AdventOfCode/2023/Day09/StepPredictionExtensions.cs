@@ -13,4 +13,7 @@ public static class StepPredictionExtensions
 
         return steps.Differences().ExtrapolateNextStep() + steps.Last();
     }
+    
+    public static int ExtrapolatePreviousStep(this int[] steps)
+        => steps.Reverse().ToArray().ExtrapolateNextStep();
 }
