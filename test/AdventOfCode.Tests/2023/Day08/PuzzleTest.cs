@@ -33,6 +33,7 @@ public class HauntedWastelandShould
 
     [Theory]
     [InputFileData("2023/Day08/sample3.txt", 6)]
+    [InputFileData("2023/Day08/input.txt", 20221)]
     public void ReachZZZInExpectedSteps_two(string mapDocument, int expectedSteps)
     {
         // Arrange
@@ -52,7 +53,7 @@ public class HauntedWastelandShould
                 newLocations.Add(newLocation);
             }
 
-            locations = newLocations;
+            locations = new List<string>(newLocations);
             steps++;
         }
 
