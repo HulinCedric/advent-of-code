@@ -10,10 +10,21 @@ public class PuzzleTest
     [Theory]
     [InputFileData("2023/Day09/sample.txt", 114)]
     [InputFileData("2023/Day09/input.txt", 1992273652)]
-    public void Sum_of_extrapolated_values(string report, int sum)
+    public void Sum_of_extrapolated_next_values(string report, int sum)
         => report
             .ParseReport()
             .Select(_.ExtrapolateNextStep)
+            .Sum()
+            .Should()
+            .Be(sum);
+
+    [Theory]
+    [InputFileData("2023/Day09/sample.txt", 2)]
+    [InputFileData("2023/Day09/input.txt", 1012)]
+    public void Sum_of_extrapolated_previous_values(string report, int sum)
+        => report
+            .ParseReport()
+            .Select(_.ExtrapolatePreviousStep)
             .Sum()
             .Should()
             .Be(sum);
@@ -61,8 +72,8 @@ public class PuzzleTest
     [InlineData(new[] { 45, 30, 21, 16, 13, 10 }, 5)]
     public void Extrapolate_previous_step_is_extrapolate_next_step_with_reverse_value(int[] steps, int nextStep)
         => steps.ExtrapolateNextStep().Should().Be(nextStep);
-    
-    
+
+
     [Theory]
     [InlineData(new[] { 0, 0, 0 }, 0)]
     [InlineData(new[] { 1, 1, 1, 1 }, 1)]
