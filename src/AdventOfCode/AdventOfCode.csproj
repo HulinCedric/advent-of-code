@@ -155,7 +155,10 @@
         <None Update="2023\Day10\input.txt">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="2023\Day10\sample.txt">
+        <None Update="2023\Day10\sample1.txt">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="2023\Day10\sample2.txt">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
