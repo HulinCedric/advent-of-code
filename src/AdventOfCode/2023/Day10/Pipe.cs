@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace AdventOfCode._2023.Day10;
@@ -23,7 +24,7 @@ public static class Pipe
             yield return position;
 
             var nextPosition = position + direction;
-            var nextTile = ground.GetTileAt(nextPosition);
+            var nextTile = ground.Tile(nextPosition);
             var nextDirection = Tile.GetNextDirection(nextTile, direction);
 
             if (nextTile == Tile.StartingTile)
@@ -34,5 +35,32 @@ public static class Pipe
             position = nextPosition;
             direction = nextDirection;
         }
+    }
+
+    public static int CountEnclosedTiles(Dictionary<Complex, char> ground, HashSet<Complex> pipe)
+        => ground.Keys.Count(position => position.IsEnclosedByPipe(ground, pipe));
+
+    // Inspired by encse solution
+    private static bool IsEnclosedByPipe(this Complex position, Dictionary<Complex, char> ground, HashSet<Complex> pipe)
+    {
+        if (pipe.Contains(position))
+        {
+            return false;
+        }
+
+        var enclosedByPipe = false;
+        position += Direction.East;
+        while (ground.ContainsKey(position))
+        {
+            if (pipe.Contains(position) &&
+                ground.Tile(position).Directions().Contains(Direction.North))
+            {
+                enclosedByPipe = !enclosedByPipe;
+            }
+
+            position += Direction.East;
+        }
+
+        return enclosedByPipe;
     }
 }

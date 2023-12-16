@@ -18,4 +18,16 @@ public class PipeShould
 
         farthestPosition.Should().Be(distance);
     }
+
+    [Theory]
+    [InputFileData("2023/Day10/input.txt", 595)]
+    public void Count_enclosed_tiles_in_pipe_loop(string groundTopology, int expectedTilesCount)
+    {
+        var ground = groundTopology.ParseGround();
+        var pipe = Pipe.RunThrough(ground, Tile.StartingTile).ToHashSet();
+
+        var tilesCount = Pipe.CountEnclosedTiles(ground, pipe);
+
+        tilesCount.Should().Be(expectedTilesCount);
+    }
 }

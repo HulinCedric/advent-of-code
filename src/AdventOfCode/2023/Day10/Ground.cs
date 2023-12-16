@@ -10,17 +10,18 @@ public static class Animal
         => AllPossibleDirection(ground, position).First();
 
     private static IEnumerable<Complex> AllPossibleDirection(Dictionary<Complex, char> ground, Complex position)
-        => from direction in ground.GetTileAt(position).GetAllDirections()
+        => from direction in ground.Tile(position).Directions()
            let oppositeDirection = direction.OppositeDirection()
            let nextPosition = position + direction
-           let nexDirections = ground.GetTileAt(nextPosition).GetAllDirections()
+           where ground.ContainsKey(nextPosition)
+           let nexDirections = ground.Tile(nextPosition).Directions()
            where nexDirections.Contains(oppositeDirection)
            select direction;
 }
 
 public static class Ground
 {
-    public static char GetTileAt(this Dictionary<Complex, char> ground, Complex position)
+    public static char Tile(this Dictionary<Complex, char> ground, Complex position)
         => ground[position];
 
     public static Complex StartingPosition(this Dictionary<Complex, char> ground, char tile)

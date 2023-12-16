@@ -21,10 +21,10 @@ public static class Tile
         { StartingTile, All }
     };
 
-    public static Complex[] GetAllDirections(this char tile)
+    public static Complex[] Directions(this char tile)
         => TileDirections[tile];
 
     public static Complex GetNextDirection(char tile, Complex currentDirection)
-        => tile.GetAllDirections()
+        => tile.Directions()
             .First(direction => direction.IsNotOppositeDirection(currentDirection));
 }
