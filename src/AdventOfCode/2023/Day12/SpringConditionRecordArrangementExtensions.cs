@@ -28,19 +28,20 @@ public static class SpringConditionRecordArrangementExtensions
             _ => ProcessEnd(pattern, nums, cache)
         };
 
+    // the good case is when there are no numbers left at the end of the pattern
     private static long ProcessEnd(string _, ImmutableStack<int> nums, Cache __)
-        // the good case is when there are no numbers left at the end of the pattern
         => nums.Any() ? 0 : 1;
 
+    // consume one spring and recurse
     private static long ProcessOperational(string pattern, ImmutableStack<int> nums, Cache cache)
-        // consume one spring and recurse
         => Arrangements(pattern[1..], nums, cache);
 
+    // recurse both ways
     private static long ProcessUnknown(string pattern, ImmutableStack<int> nums, Cache cache)
-        // recurse both ways
         => Arrangements(Spring.Operational + pattern[1..], nums, cache) +
            Arrangements(Spring.Damaged + pattern[1..], nums, cache);
 
+    // take the first number and consume that many damaged springs, recurse
     private static long ProcessDamaged(string pattern, ImmutableStack<int> nums, Cache cache)
     {
         if (!HasNumbersLeft(nums))
@@ -63,6 +64,22 @@ public static class SpringConditionRecordArrangementExtensions
         return Arrangements(nextPattern, nums.Pop(), cache);
     }
 
+    private static bool HasNumbersLeft(ImmutableStack<int> nums)
+        => nums.Any();
+
+    private static bool NotEnoughDamagedSprings(string pattern, ImmutableStack<int> nums)
+    {
+        var n = nums.Peek();
+        var potentiallyDamaged = pattern.TakeWhile(s => s is Spring.Damaged or Spring.Unknown).Count();
+        return potentiallyDamaged < n;
+    }
+
+    private static bool DamagedSpringFollowsRange(string pattern, ImmutableStack<int> nums)
+    {
+        var n = nums.Peek();
+        return pattern.Length > n && pattern[n] == Spring.Damaged;
+    }
+
     private static string NextPattern(string pattern, ImmutableStack<int> nums)
         => IsEnd(pattern, nums) ?
                "" :
@@ -72,21 +89,5 @@ public static class SpringConditionRecordArrangementExtensions
     {
         var n = nums.Peek();
         return pattern.Length == n;
-    }
-
-    private static bool HasNumbersLeft(ImmutableStack<int> nums)
-        => nums.Any();
-
-    private static bool NotEnoughDamagedSprings(string pattern, ImmutableStack<int> nums)
-    {
-        var n = nums.Peek();
-        var potentiallyDead = pattern.TakeWhile(s => s is Spring.Damaged or Spring.Unknown).Count();
-        return potentiallyDead < n;
-    }
-
-    private static bool DamagedSpringFollowsRange(string pattern, ImmutableStack<int> nums)
-    {
-        var n = nums.Peek();
-        return pattern.Length > n && pattern[n] == Spring.Damaged;
     }
 }
