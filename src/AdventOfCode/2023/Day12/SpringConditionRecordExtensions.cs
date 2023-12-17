@@ -1,4 +1,4 @@
-using System.Linq;
+using static AdventOfCode._2023.Day12.SpringConditionRecord;
 
 namespace AdventOfCode._2023.Day12;
 
@@ -6,26 +6,16 @@ public static class SpringConditionRecordExtensions
 {
     public static SpringConditionRecord Unfold(this SpringConditionRecord record, int repeatCount)
         => new(
-            Unfold(record.Springs, Spring.Unknown, repeatCount),
-            Unfold(
-                    record.ContiguousGroupOfDamagedSpringsString(),
-                    Day12.SpringConditionRecord.ContiguousGroupOfDamagedSpringsSeparator,
-                    repeatCount)
-                .ParseContiguousGroupOfDamagedSprings());
-
-    public static string Unfold(string value, char separator, int repeatCount)
-        => string.Join(separator, Enumerable.Repeat(value, repeatCount));
+            UnfoldExtensions.Unfold(record.Springs, Spring.Unknown, repeatCount),
+            ContiguousGroupOfDamagedSpringsExtensions.Unfold(record.ContiguousGroupOfDamagedSprings, repeatCount));
 
     public static SpringConditionRecord SpringConditionRecord(string record)
     {
-        var part = record.Split(Day12.SpringConditionRecord.Separator);
+        var part = record.Split(Separator);
 
         var springs = part[0];
-        var contiguousGroupOfDamagedSprings = part[1].ParseContiguousGroupOfDamagedSprings();
+        var contiguousGroupOfDamagedSprings = part[1].Parse();
 
         return new SpringConditionRecord(springs, contiguousGroupOfDamagedSprings);
     }
-
-    private static int[] ParseContiguousGroupOfDamagedSprings(this string part)
-        => part.Split(Day12.SpringConditionRecord.ContiguousGroupOfDamagedSpringsSeparator).Select(int.Parse).ToArray();
 }

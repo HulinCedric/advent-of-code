@@ -8,12 +8,7 @@ using Cache = Dictionary<(string, ImmutableStack<int>), long>;
 
 public readonly record struct SpringConditionRecord(string Springs, IEnumerable<int> ContiguousGroupOfDamagedSprings)
 {
-    public const char ContiguousGroupOfDamagedSpringsSeparator = ',';
-
     public const char Separator = ' ';
-
-    public string ContiguousGroupOfDamagedSpringsString()
-        => string.Join(ContiguousGroupOfDamagedSpringsSeparator, ContiguousGroupOfDamagedSprings);
 
     public long Arrangements()
         => SpringConditionRecordArrangementExtensions.Arrangements(
@@ -22,5 +17,5 @@ public readonly record struct SpringConditionRecord(string Springs, IEnumerable<
             new Cache());
 
     public override string ToString()
-        => $"{Springs}{Separator}{ContiguousGroupOfDamagedSpringsString()}";
+        => $"{Springs}{Separator}{ContiguousGroupOfDamagedSprings.String()}";
 }
