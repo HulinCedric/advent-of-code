@@ -19,23 +19,23 @@ public class PuzzleTest
         string springsConditionRecords,
         int repeat,
         long arrangements)
-        => Solve(springsConditionRecords, repeat)
+        => Puzzle.Solve(springsConditionRecords, repeat)
             .Should()
             .Be(arrangements);
+}
 
-
-    private static long Solve(string input, int repeat)
+public class Puzzle
+{
+    public static long Solve(string input, int repeat)
     {
         var cache = new Cache();
-        return (
-                   from line in input.Split("\n")
-                   let parts = line.Split(" ")
-                   let pattern = SpringRecordExtensions.Unfold(parts[0], '?', repeat)
-                   let numString = SpringRecordExtensions.Unfold(parts[1], ',', repeat)
-                   let nums = numString.Split(',').Select(int.Parse)
-                   select
-                       Compute(pattern, ImmutableStack.CreateRange(nums.Reverse()), cache)
-               ).Sum();
+        return (from line in input.Split("\n")
+                let parts = line.Split(" ")
+                let pattern = SpringConditionRecordExtensions.Unfold(parts[0], '?', repeat)
+                let numString = SpringConditionRecordExtensions.Unfold(parts[1], ',', repeat)
+                let nums = numString.Split(',').Select(int.Parse)
+                select
+                    Compute(pattern, ImmutableStack.CreateRange(nums.Reverse()), cache)).Sum();
     }
 
     private static long Compute(string pattern, ImmutableStack<int> nums, Cache cache)
