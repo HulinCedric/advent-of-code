@@ -8,11 +8,6 @@ namespace AdventOfCode._2023.Day12;
 
 public class Refactoring
 {
-    private const char Damaged = '#';
-    private const char Operational = '.';
-    private const char Unknown = '?';
-
-
     [Theory]
     [InlineData("???.### 1,1,3", 1)]
     [InlineData(".??..??...?##. 1,1,3", 4)]

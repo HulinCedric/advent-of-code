@@ -24,7 +24,7 @@ public class PuzzleTest
             .Be(arrangements);
 }
 
-public class Puzzle
+public static class Puzzle
 {
     public static long Solve(string input, int repeat)
     {
@@ -35,10 +35,10 @@ public class Puzzle
                 let numString = SpringConditionRecordExtensions.Unfold(parts[1], ',', repeat)
                 let nums = numString.Split(',').Select(int.Parse)
                 select
-                    Compute(pattern, ImmutableStack.CreateRange(nums.Reverse()), cache)).Sum();
+                    Arrangements(pattern, ImmutableStack.CreateRange(nums.Reverse()), cache)).Sum();
     }
 
-    private static long Compute(string pattern, ImmutableStack<int> nums, Cache cache)
+    private static long Arrangements(string pattern, ImmutableStack<int> nums, Cache cache)
     {
         if (!cache.ContainsKey((pattern, nums)))
         {
@@ -51,9 +51,9 @@ public class Puzzle
     private static long Dispatch(string pattern, ImmutableStack<int> nums, Cache cache)
         => pattern.FirstOrDefault() switch
         {
-            '.' => ProcessDot(pattern, nums, cache),
-            '?' => ProcessQuestion(pattern, nums, cache),
-            '#' => ProcessHash(pattern, nums, cache),
+            Spring.Operational => ProcessOperational(pattern, nums, cache),
+            Spring.Unknown => ProcessUnknown(pattern, nums, cache),
+            Spring.Damaged => ProcessDamaged(pattern, nums, cache),
             _ => ProcessEnd(pattern, nums, cache)
         };
 
@@ -61,15 +61,16 @@ public class Puzzle
         // the good case is when there are no numbers left at the end of the pattern
         => nums.Any() ? 0 : 1;
 
-    private static long ProcessDot(string pattern, ImmutableStack<int> nums, Cache cache)
+    private static long ProcessOperational(string pattern, ImmutableStack<int> nums, Cache cache)
         // consume one spring and recurse
-        => Compute(pattern[1..], nums, cache);
+        => Arrangements(pattern[1..], nums, cache);
 
-    private static long ProcessQuestion(string pattern, ImmutableStack<int> nums, Cache cache)
+    private static long ProcessUnknown(string pattern, ImmutableStack<int> nums, Cache cache)
         // recurse both ways
-        => Compute("." + pattern[1..], nums, cache) + Compute("#" + pattern[1..], nums, cache);
+        => Arrangements(Spring.Operational + pattern[1..], nums, cache) +
+           Arrangements(Spring.Damaged + pattern[1..], nums, cache);
 
-    private static long ProcessHash(string pattern, ImmutableStack<int> nums, Cache cache)
+    private static long ProcessDamaged(string pattern, ImmutableStack<int> nums, Cache cache)
     {
         // take the first number and consume that many dead springs, recurse
 
@@ -81,7 +82,7 @@ public class Puzzle
         var n = nums.Peek();
         nums = nums.Pop();
 
-        var potentiallyDead = pattern.TakeWhile(s => s == '#' || s == '?').Count();
+        var potentiallyDead = pattern.TakeWhile(s => s is Spring.Damaged or Spring.Unknown).Count();
 
         if (potentiallyDead < n)
         {
@@ -90,14 +91,14 @@ public class Puzzle
 
         if (pattern.Length == n)
         {
-            return Compute("", nums, cache);
+            return Arrangements("", nums, cache);
         }
 
-        if (pattern[n] == '#')
+        if (pattern[n] == Spring.Damaged)
         {
             return 0; // dead spring follows the range -> not good
         }
 
-        return Compute(pattern[(n + 1)..], nums, cache);
+        return Arrangements(pattern[(n + 1)..], nums, cache);
     }
 }
