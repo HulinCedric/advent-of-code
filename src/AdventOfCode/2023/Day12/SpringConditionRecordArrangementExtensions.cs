@@ -10,12 +10,13 @@ public static class SpringConditionRecordArrangementExtensions
 {
     internal static long Arrangements(string pattern, ImmutableStack<int> nums, Cache cache)
     {
-        if (!cache.ContainsKey((pattern, nums)))
+        var key = (pattern, nums);
+        if (cache.TryGetValue(key, out var value))
         {
-            cache[(pattern, nums)] = Dispatch(pattern, nums, cache);
+            return value;
         }
 
-        return cache[(pattern, nums)];
+        return cache[key] = Dispatch(pattern, nums, cache);
     }
 
     private static long Dispatch(string pattern, ImmutableStack<int> nums, Cache cache)
