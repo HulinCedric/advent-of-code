@@ -43,8 +43,6 @@ public static class SpringConditionRecordArrangementExtensions
 
     private static long ProcessDamaged(string pattern, ImmutableStack<int> nums, Cache cache)
     {
-        // take the first number and consume that many dead springs, recurse
-
         if (!HasNumbersLeft(nums))
         {
             return 0;
@@ -60,16 +58,20 @@ public static class SpringConditionRecordArrangementExtensions
             return 0;
         }
 
+        var nextPattern = NextPattern(pattern, nums);
+
+        return Arrangements(nextPattern, nums.Pop(), cache);
+    }
+
+    private static string NextPattern(string pattern, ImmutableStack<int> nums)
+        => IsEnd(pattern, nums) ?
+               "" :
+               pattern[(nums.Peek() + 1)..];
+
+    private static bool IsEnd(string pattern, ImmutableStack<int> nums)
+    {
         var n = nums.Peek();
-        nums = nums.Pop();
-
-        if (pattern.Length == n)
-        {
-            return Arrangements("", nums, cache);
-        }
-
-
-        return Arrangements(pattern[(n + 1)..], nums, cache);
+        return pattern.Length == n;
     }
 
     private static bool HasNumbersLeft(ImmutableStack<int> nums)
