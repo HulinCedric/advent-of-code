@@ -11,20 +11,18 @@ public class PuzzleTest
     [InputFileData("2023/Day12/input.txt", 1, 6981L)]
     [InputFileData("2023/Day12/sample.txt", 5, 525152)]
     [InputFileData("2023/Day12/input.txt", 5, 4546215031609L)]
-    public void Count_all_possible_arrangements(
+    public void Count_all_possible_springs_arrangements(
         string springsConditionRecords,
         int repeat,
-        long arrangements)
-        => Puzzle.Solve(springsConditionRecords, repeat)
-            .Should()
-            .Be(arrangements);
-}
+        long expected)
+    {
+        var springsArrangements = springsConditionRecords.Split("\n")
+            .Select(SpringConditionRecordExtensions.SpringConditionRecord)
+            .Select(record => record.Unfold(repeat))
+            .Select(unfoldedRecord => unfoldedRecord.Arrangements());
 
-public static class Puzzle
-{
-    public static long Solve(string input, int repeat)
-        => (from line in input.Split("\n")
-            let record = SpringConditionRecordExtensions.Parse(line)
-            let unfolded = SpringConditionRecordExtensions.Unfold(record, repeat)
-            select unfolded.Arrangements()).Sum();
+        springsArrangements.Sum()
+            .Should()
+            .Be(expected);
+    }
 }

@@ -1,31 +1,49 @@
-using System.Linq;
 using FluentAssertions;
 using Xunit;
+using static AdventOfCode._2023.Day12.SpringConditionRecordExtensions;
 
 namespace AdventOfCode._2023.Day12;
 
 public class SpringConditionRecordShould
 {
     [Theory]
-    [InlineData(".#", ".#?.#?.#?.#?.#")]
-    public void UnfoldSprings(
+    [InlineData("???.### 1,1,3", 1)]
+    [InlineData(".??..??...?##. 1,1,3", 4)]
+    [InlineData("?#?#?#?#?#?#?#? 1,3,1,6", 1)]
+    [InlineData("????.#...#... 4,1,1", 1)]
+    [InlineData("????.######..#####. 1,6,5", 4)]
+    [InlineData("?###???????? 3,2,1", 10)]
+    public void Count_possible_springs_arrangements(
         string springsConditionRecord,
-        string unfolded)
-        => SpringConditionRecordExtensions.Unfold(springsConditionRecord, '?', 5).Should().Be(unfolded);
-
-    [Theory]
-    [InlineData("1", "1,1,1,1,1")]
-    public void UnfoldDamageRecord(
-        string springsConditionRecord,
-        string unfolded)
-        => SpringConditionRecordExtensions.Unfold(springsConditionRecord, ',', 5).Should().Be(unfolded);
+        int arrangements)
+        => SpringConditionRecord(springsConditionRecord)
+            .Arrangements()
+            .Should()
+            .Be(arrangements);
 
     [Theory]
     [InlineData("???.### 1,1,3", "???.###????.###????.###????.###????.### 1,1,3,1,1,3,1,1,3,1,1,3,1,1,3")]
-    public void UnfoldSpringRecord(
-        string springsConditionRecord,
+    public void Be_unfold(
+        string folded,
         string unfolded)
-        => SpringConditionRecordExtensions.Unfold(SpringConditionRecordExtensions.Parse(springsConditionRecord), 5)
+        => SpringConditionRecord(folded)
+            .Unfold(5)
             .Should()
-            .BeEquivalentTo(SpringConditionRecordExtensions.Parse(unfolded));
+            .BeEquivalentTo(SpringConditionRecord(unfolded));
+
+    [Theory]
+    [InlineData("???.### 1,1,3", 1)]
+    [InlineData(".??..??...?##. 1,1,3", 16384)]
+    [InlineData("?#?#?#?#?#?#?#? 1,3,1,6", 1)]
+    [InlineData("????.#...#... 4,1,1", 16)]
+    [InlineData("????.######..#####. 1,6,5", 2500)]
+    [InlineData("?###???????? 3,2,1", 506250)]
+    public void Count_possible_springs_unfolded_arrangements(
+        string springsConditionRecord,
+        int arrangements)
+        => SpringConditionRecord(springsConditionRecord)
+            .Unfold(5)
+            .Arrangements()
+            .Should()
+            .Be(arrangements);
 }

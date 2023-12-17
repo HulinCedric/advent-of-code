@@ -10,6 +10,8 @@ public readonly record struct SpringConditionRecord(string Springs, IEnumerable<
 {
     public const char ContiguousGroupOfDamagedSpringsSeparator = ',';
 
+    public const char Separator = ' ';
+
     public string ContiguousGroupOfDamagedSpringsString()
         => string.Join(ContiguousGroupOfDamagedSpringsSeparator, ContiguousGroupOfDamagedSprings);
 
@@ -18,4 +20,7 @@ public readonly record struct SpringConditionRecord(string Springs, IEnumerable<
             Springs,
             ImmutableStack.CreateRange(ContiguousGroupOfDamagedSprings.Reverse()),
             new Cache());
+
+    public override string ToString()
+        => $"{Springs}{Separator}{ContiguousGroupOfDamagedSpringsString()}";
 }
