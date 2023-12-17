@@ -30,12 +30,13 @@ public static class Puzzle
     {
         var cache = new Cache();
         return (from line in input.Split("\n")
-                let parts = line.Split(" ")
-                let pattern = SpringConditionRecordExtensions.Unfold(parts[0], '?', repeat)
-                let numString = SpringConditionRecordExtensions.Unfold(parts[1], ',', repeat)
-                let nums = numString.Split(',').Select(int.Parse)
+                let record = SpringConditionRecordExtensions.Parse(line)
+                let unfolded = SpringConditionRecordExtensions.Unfold(record, repeat)
                 select
-                    Arrangements(pattern, ImmutableStack.CreateRange(nums.Reverse()), cache)).Sum();
+                    Arrangements(
+                        unfolded.Springs,
+                        ImmutableStack.CreateRange(unfolded.ContiguousGroupOfDamagedSprings.Reverse()),
+                        cache)).Sum();
     }
 
     private static long Arrangements(string pattern, ImmutableStack<int> nums, Cache cache)

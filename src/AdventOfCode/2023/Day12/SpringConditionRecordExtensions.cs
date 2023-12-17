@@ -6,8 +6,11 @@ public static class SpringConditionRecordExtensions
 {
     public static SpringConditionRecord Unfold(SpringConditionRecord record, int repeatCount)
         => new(
-            Unfold(record.Springs, '?', repeatCount),
-            Unfold(record.ContiguousGroupOfDamagedSpringsString(), ',', repeatCount)
+            Unfold(record.Springs, Spring.Unknown, repeatCount),
+            Unfold(
+                    record.ContiguousGroupOfDamagedSpringsString(),
+                    SpringConditionRecord.ContiguousGroupOfDamagedSpringsSeparator,
+                    repeatCount)
                 .ParseContiguousGroupOfDamagedSprings());
 
     public static string Unfold(string value, char separator, int repeatCount)
