@@ -30,10 +30,10 @@ public class MapTests
     [Theory]
     [InputFileData("2023/Day13/sample1.txt")]
     public async Task FindMirrorVerticalPosition(string input)
-        => await Verify(MapParser.Parse(input).GetVerticalMirrorPosition().First().ToString()).UseParameters(input);
+        => await Verify(MapParser.Parse(input).GetMirrorPosition().First().ToString()).UseParameters(input);
 
     [Theory]
     [InputFileData("2023/Day13/sample2.txt")]
     public async Task FindMirrorHorizontalPosition(string input)
-        => await Verify(MapParser.Parse(input).GetHorizontalMirrorPosition().First().ToString()).UseParameters(input);
+        => await Verify(MapParser.Parse(input).GetMirrorPosition().First().ToString()).UseParameters(input);
 }
