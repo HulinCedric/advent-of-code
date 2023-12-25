@@ -9,10 +9,16 @@ public class Map : Dictionary<Position, char>
     {
     }
 
+    public Map GetVerticalSlice()
+        => new(
+            Positions(this, new Position(0, 0), Direction.Down)
+                .Select(position => new KeyValuePair<Position, char>(position, this[position])));
+
     public Map GetHorizontalSlice()
         => new(
-            Positions(this, new Position(0.0, 1.0), Direction.Right)
+            Positions(this, new Position(0, 0), Direction.Right)
                 .Select(position => new KeyValuePair<Position, char>(position, this[position])));
+
 
     private static IEnumerable<Position> Positions(Map map, Position start, Direction direction)
     {
