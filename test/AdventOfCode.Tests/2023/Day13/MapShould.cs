@@ -30,8 +30,7 @@ public class MapShould
         => Parse(input)
             .MirrorPosition()
             .Should()
-            .HaveCount(1)
-            .And.Contain(new Position(mirrorRowPosition, mirrorColumnPosition));
+            .Be(new Position(mirrorRowPosition, mirrorColumnPosition));
 
     [Theory]
     [InputFileData("2023/Day13/sample2.txt", 4, 0)]
@@ -42,6 +41,5 @@ public class MapShould
         => Parse(input)
             .MirrorPosition()
             .Should()
-            .HaveCount(1)
-            .And.Contain(new Position(mirrorRowPosition, mirrorColumnPosition));
+            .Be(new Position(mirrorRowPosition, mirrorColumnPosition));
 }

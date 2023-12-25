@@ -14,7 +14,7 @@ public class PuzzleTest
         string maps,
         int summary)
         => ParseMany(maps)
-            .SelectMany(map => map.MirrorPosition())
+            .Select(map => map.MirrorPosition())
             .Select(mirror => mirror.Summary())
             .Sum()
             .Should()
@@ -27,7 +27,7 @@ public class PuzzleTest
         string maps,
         int summary)
         => ParseMany(maps)
-            .SelectMany(map => map.MirrorWithSmudgePosition())
+            .Select(map => map.MirrorWithSmudgePosition())
             .Select(mirror => mirror.Summary())
             .Sum()
             .Should()

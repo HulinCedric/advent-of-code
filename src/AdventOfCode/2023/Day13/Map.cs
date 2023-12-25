@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,24 +12,25 @@ public class Map : Dictionary<Position, char>
     {
     }
 
-    public IEnumerable<Position> MirrorPosition()
-        => VerticalMirrorPosition(0)
-            .Concat(HorizontalMirrorPosition(0));
+    public Position MirrorPosition()
+        => MirrorPositionWith(numberOfSmudge: 0);
 
-    public IEnumerable<Position> MirrorWithSmudgePosition()
-        => VerticalMirrorPosition(1)
-            .Concat(HorizontalMirrorPosition(1));
+    public Position MirrorWithSmudgePosition()
+        => MirrorPositionWith(numberOfSmudge: 1);
 
-    private IEnumerable<Position> VerticalMirrorPosition(int numberOfSmudge)
-        => VerticalSlice()
+    private Position MirrorPositionWith(int numberOfSmudge)
+        => ArraySegment<Position>.Empty
+            .Concat(MirrorPositionIn(Direction.Down, numberOfSmudge))
+            .Concat(MirrorPositionIn(Direction.Right, numberOfSmudge))
+            .First();
+
+    private IEnumerable<Position> MirrorPositionIn(Direction direction, int numberOfSmudge)
+        => SliceIn(direction)
             .Skip(1)
-            .Where(mirror => IsMirror(mirror, Direction.Down, numberOfSmudge));
+            .Where(position => IsMirror(position, direction, numberOfSmudge));
 
-    private IEnumerable<Position> HorizontalMirrorPosition(int numberOfSmudge)
-        => HorizontalSlice()
-            .Skip(1)
-            .Where(position => IsMirror(position, Direction.Right, numberOfSmudge));
-
+    private IEnumerable<Position> SliceIn(Direction direction)
+        => Positions(Start, direction);
 
     private bool IsMirror(Position position, Direction direction, int numberOfSmudge)
         => (
@@ -41,12 +43,6 @@ public class Map : Dictionary<Position, char>
 
     private int CountAsymmetry(IEnumerable<Position> pattern, IEnumerable<Position> reflectedPattern)
         => pattern.Zip(reflectedPattern).Count(positions => this[positions.First] != this[positions.Second]);
-
-    private IEnumerable<Position> VerticalSlice()
-        => Positions(Start, Direction.Down);
-
-    private IEnumerable<Position> HorizontalSlice()
-        => Positions(Start, Direction.Right);
 
     private IEnumerable<Position> Positions(Position start, Direction direction)
     {
