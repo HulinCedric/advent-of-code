@@ -28,7 +28,7 @@ public class MapShould
         int mirrorRowPosition,
         int mirrorColumnPosition)
         => Parse(input)
-            .GetMirrorPosition()
+            .MirrorPosition()
             .Should()
             .HaveCount(1)
             .And.Contain(new Position(mirrorRowPosition, mirrorColumnPosition));
@@ -40,7 +40,7 @@ public class MapShould
         int mirrorRowPosition,
         int mirrorColumnPosition)
         => Parse(input)
-            .GetMirrorPosition()
+            .MirrorPosition()
             .Should()
             .HaveCount(1)
             .And.Contain(new Position(mirrorRowPosition, mirrorColumnPosition));

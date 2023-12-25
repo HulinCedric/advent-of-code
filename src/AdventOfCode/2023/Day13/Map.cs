@@ -5,17 +5,48 @@ namespace AdventOfCode._2023.Day13;
 
 public class Map : Dictionary<Position, char>
 {
+    private static readonly Position Start = new(0, 0);
+
     public Map(IEnumerable<KeyValuePair<Position, char>> toDictionary) : base(toDictionary)
     {
     }
 
-    public IEnumerable<KeyValuePair<Position, char>> GetVerticalSlice()
-        => Positions(new Position(0, 0), Direction.Down)
-            .Select(position => new KeyValuePair<Position, char>(position, this[position]));
+    public IEnumerable<Position> MirrorPosition()
+        => VerticalMirrorPosition(0)
+            .Concat(HorizontalMirrorPosition(0));
 
-    public IEnumerable<KeyValuePair<Position, char>> GetHorizontalSlice()
-        => Positions(new Position(0, 0), Direction.Right)
-            .Select(position => new KeyValuePair<Position, char>(position, this[position]));
+    public IEnumerable<Position> MirrorWithSmudgePosition()
+        => VerticalMirrorPosition(1)
+            .Concat(HorizontalMirrorPosition(1));
+
+    private IEnumerable<Position> VerticalMirrorPosition(int numberOfSmudge)
+        => VerticalSlice()
+            .Skip(1)
+            .Where(mirror => IsMirror(mirror, Direction.Down, numberOfSmudge));
+
+    private IEnumerable<Position> HorizontalMirrorPosition(int numberOfSmudge)
+        => HorizontalSlice()
+            .Skip(1)
+            .Where(position => IsMirror(position, Direction.Right, numberOfSmudge));
+
+
+    private bool IsMirror(Position position, Direction direction, int numberOfSmudge)
+        => (
+               from mirror in Positions(position, direction.Orthogonal())
+               let pattern = Positions(mirror, direction)
+               let reflectedPattern = Positions(mirror - direction, direction.Reverse())
+               select CountAsymmetry(pattern, reflectedPattern)
+           ).Sum() ==
+           numberOfSmudge;
+
+    private int CountAsymmetry(IEnumerable<Position> pattern, IEnumerable<Position> reflectedPattern)
+        => pattern.Zip(reflectedPattern).Count(positions => this[positions.First] != this[positions.Second]);
+
+    private IEnumerable<Position> VerticalSlice()
+        => Positions(Start, Direction.Down);
+
+    private IEnumerable<Position> HorizontalSlice()
+        => Positions(Start, Direction.Right);
 
     private IEnumerable<Position> Positions(Position start, Direction direction)
     {
@@ -24,32 +55,4 @@ public class Map : Dictionary<Position, char>
             yield return position;
         }
     }
-
-    public IEnumerable<Position> GetMirrorPosition()
-        => GetVerticalMirrorPosition()
-            .Concat(GetHorizontalMirrorPosition())
-            .Select(mirror => mirror.Key);
-
-    public IEnumerable<KeyValuePair<Position, char>> GetVerticalMirrorPosition()
-        => GetVerticalSlice()
-            .Skip(1)
-            .Where(mirror => IsMirror(mirror.Key, Direction.Down))
-            .Select(mirror => mirror);
-
-    public IEnumerable<KeyValuePair<Position, char>> GetHorizontalMirrorPosition()
-        => GetHorizontalSlice()
-            .Skip(1)
-            .Where(position => IsMirror(position.Key, Direction.Right))
-            .Select(mirror => mirror);
-
-    private bool IsMirror(Position position, Direction direction)
-        => (
-               from mirror in Positions(position, direction.Orthogonal())
-               let pattern = Positions(mirror, direction)
-               let reflectedPattern = Positions(mirror - direction, direction.Reverse())
-               select AreSymmetric(pattern, reflectedPattern)
-           ).All(areSymmetric => areSymmetric);
-
-    private bool AreSymmetric(IEnumerable<Position> pattern, IEnumerable<Position> reflectedPattern)
-        => pattern.Zip(reflectedPattern).All(positions => this[positions.First] == this[positions.Second]);
 }
