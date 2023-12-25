@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -13,8 +14,7 @@ public class PuzzleTest
         string mapsInformation,
         int expected)
     {
-        var maps = mapsInformation.Split("\n\n")
-            .Select(MapParser.Parse);
+        var maps = MapParser.ParseMany(mapsInformation);
 
         var mirrorPositions = maps
             .SelectMany(map => map.GetMirrorPosition());

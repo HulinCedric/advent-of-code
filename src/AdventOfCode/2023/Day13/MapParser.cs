@@ -15,4 +15,10 @@ public static class MapParser
             let element = rows[rowIndex][columnIndex]
             select new KeyValuePair<Position, char>(position, element));
     }
+
+    public static IEnumerable<Map> ParseMany(string mapsInformation)
+    {
+        return mapsInformation.Split("\n\n")
+            .Select(MapParser.Parse);
+    }
 }
