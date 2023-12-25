@@ -5,37 +5,37 @@
   },
   {
     Key: {
-      Row: 1.0
+      Row: 1
     },
     Value: "#"
   },
   {
     Key: {
-      Row: 2.0
+      Row: 2
     },
     Value: "."
   },
   {
     Key: {
-      Row: 3.0
+      Row: 3
     },
     Value: "#"
   },
   {
     Key: {
-      Row: 4.0
+      Row: 4
     },
     Value: "#"
   },
   {
     Key: {
-      Row: 5.0
+      Row: 5
     },
     Value: "."
   },
   {
     Key: {
-      Row: 6.0
+      Row: 6
     },
     Value: "#"
   }

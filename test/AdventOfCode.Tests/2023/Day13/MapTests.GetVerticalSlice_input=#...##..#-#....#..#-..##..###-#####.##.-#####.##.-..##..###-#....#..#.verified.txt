@@ -5,49 +5,49 @@
   },
   {
     Key: {
-      Column: 1.0
+      Column: 1
     },
     Value: "."
   },
   {
     Key: {
-      Column: 2.0
+      Column: 2
     },
     Value: "."
   },
   {
     Key: {
-      Column: 3.0
+      Column: 3
     },
     Value: "."
   },
   {
     Key: {
-      Column: 4.0
+      Column: 4
     },
     Value: "#"
   },
   {
     Key: {
-      Column: 5.0
+      Column: 5
     },
     Value: "#"
   },
   {
     Key: {
-      Column: 6.0
+      Column: 6
     },
     Value: "."
   },
   {
     Key: {
-      Column: 7.0
+      Column: 7
     },
     Value: "."
   },
   {
     Key: {
-      Column: 8.0
+      Column: 8
     },
     Value: "#"
   }

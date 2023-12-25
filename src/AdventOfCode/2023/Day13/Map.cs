@@ -25,8 +25,10 @@ public class Map : Dictionary<Position, char>
         }
     }
 
-    public IEnumerable<KeyValuePair<Position, char>> GetMirrorPosition()
-        => GetVerticalMirrorPosition().Concat(GetHorizontalMirrorPosition());
+    public IEnumerable<Position> GetMirrorPosition()
+        => GetVerticalMirrorPosition()
+            .Concat(GetHorizontalMirrorPosition())
+            .Select(mirror => mirror.Key);
 
     public IEnumerable<KeyValuePair<Position, char>> GetVerticalMirrorPosition()
         => GetVerticalSlice()
