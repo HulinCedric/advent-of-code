@@ -7,4 +7,7 @@ public readonly record struct Direction(double X, double Y)
 
     public Direction Reverse()
         => new(-X, -Y);
+
+    public Direction Orthogonal()
+        => this == Down ? Right : Down;
 }
