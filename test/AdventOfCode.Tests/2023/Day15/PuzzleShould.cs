@@ -165,7 +165,7 @@ public class Box
 
         var lens = new Lens(parts[0], parts[1]);
 
-        var existingLabeledLens = lenses.FirstOrDefault(l => l.Label.StartsWith(parts[0]));
+        var existingLabeledLens = lenses.FirstOrDefault(l => l.AsSameLabelAs(lens));
         if (existingLabeledLens != null)
         {
             var indexOfExistingLens = lenses.IndexOf(existingLabeledLens);
@@ -180,13 +180,28 @@ public class Box
     }
 
     public void RemoveLensWithLabel(string label)
-        => lenses.RemoveAll(lens => lens.Label.StartsWith(label));
+    {
+        var existingLabeledLens = lenses.FirstOrDefault(l => l.AsLabel(label));
+        if (existingLabeledLens == null)
+        {
+            return;
+        }
+
+        var indexOfExistingLens = lenses.IndexOf(existingLabeledLens);
+        lenses.RemoveAt(indexOfExistingLens);
+    }
 }
 
 internal record Lens(string Label, string FocalLength)
 {
     public override string ToString()
         => Label + " " + FocalLength;
+
+    public bool AsSameLabelAs(Lens other)
+        => AsLabel(other.Label);
+
+    public bool AsLabel(string label)
+        => Label == label;
 }
 
 internal record InitializationStep(string Label, char Operation, int? FocalLength);
