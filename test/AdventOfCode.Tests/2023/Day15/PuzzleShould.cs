@@ -44,6 +44,14 @@ public class PuzzleShould
         box.ToString().Should().BeEmpty();
     }
 
+    [Fact]
+    public void Should_print_box_when_lens_inside()
+    {
+        var box = new Box(1);
+        box.Add("qp 3");
+        box.ToString().Should().Be("Box 1: [qp 3]");
+    }
+
 
     private InitializationStep Parse(string initializationStep)
     {
@@ -97,12 +105,24 @@ public class PuzzleShould
 public class Box
 {
     private readonly int number;
+    private string lens;
+
 
     public Box(int number)
         => this.number = number;
 
     public override string ToString()
-        => "";
+    {
+        if (string.IsNullOrEmpty(lens))
+        {
+            return "";
+        }
+
+        return "Box " + number + ": [" + lens + "]";
+    }
+
+    public void Add(string lens)
+        => this.lens = lens;
 }
 
 internal readonly record struct InitializationStep(string Label, char Operation, int? FocalLength);
