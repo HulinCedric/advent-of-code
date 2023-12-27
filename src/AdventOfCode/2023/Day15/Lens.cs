@@ -1,6 +1,6 @@
 namespace AdventOfCode._2023.Day15;
 
-internal record Lens(string Label, int FocalLength)
+public record Lens(string Label, int FocalLength)
 {
     public override string ToString()
         => Label + " " + FocalLength;
@@ -10,4 +10,11 @@ internal record Lens(string Label, int FocalLength)
 
     public bool AsLabel(string label)
         => Label == label;
+
+    public static Lens Parse(string lensInformation)
+    {
+        var parts = lensInformation.Split(' ');
+
+        return new Lens(parts[0], int.Parse(parts[1]));
+    }
 }

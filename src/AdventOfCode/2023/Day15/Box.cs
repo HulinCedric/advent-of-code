@@ -6,11 +6,11 @@ namespace AdventOfCode._2023.Day15;
 public class Box
 {
     private readonly List<Lens> lenses;
-    public int Number { get; }
+    private readonly int number;
 
     public Box(int number)
     {
-        this.Number = number;
+        this.number = number;
         lenses = new List<Lens>();
     }
 
@@ -21,15 +21,11 @@ public class Box
             return "";
         }
 
-        return "Box " + Number + ": [" + string.Join("] [", lenses) + "]";
+        return "Box " + number + ": [" + string.Join("] [", lenses) + "]";
     }
 
-    public void Add(string lensInfo)
+    public void Add(Lens lens)
     {
-        var parts = lensInfo.Split(' ');
-
-        var lens = new Lens(parts[0], int.Parse(parts[1]));
-
         var existingLabeledLens = lenses.FirstOrDefault(l => l.AsSameLabelAs(lens));
         if (existingLabeledLens != null)
         {
@@ -45,16 +41,7 @@ public class Box
     }
 
     public void RemoveLensWithLabel(string label)
-    {
-        var existingLabeledLens = lenses.FirstOrDefault(l => l.AsLabel(label));
-        if (existingLabeledLens == null)
-        {
-            return;
-        }
-
-        var indexOfExistingLens = lenses.IndexOf(existingLabeledLens);
-        lenses.RemoveAt(indexOfExistingLens);
-    }
+        => lenses.RemoveAll(l => l.AsLabel(label));
 
     /// <summary>
     ///     The focusing power of a single lens is the result of multiplying together:
@@ -65,7 +52,7 @@ public class Box
     /// <returns></returns>
     public int FocusingPower()
     {
-        var boxNumber = 1 + Number;
+        var boxNumber = 1 + number;
 
         return lenses.Select((lens, slotIndex) => boxNumber * lens.FocalLength * (slotIndex + 1)).Sum();
     }

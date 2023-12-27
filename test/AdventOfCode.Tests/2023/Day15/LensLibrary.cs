@@ -42,7 +42,7 @@ public class LensLibrary
         => boxes[step.BoxNumber()];
 
     private static void AddLens(Box box, Step step)
-        => box.Add(step.Label + " " + step.FocalLength);
+        => box.Add(new Lens(step.Label, step.FocalLength.Value));
 
     private static void RemoveLens(Box box, Step step)
         => box.RemoveLensWithLabel(step.Label);
