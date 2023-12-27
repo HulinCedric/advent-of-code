@@ -26,13 +26,10 @@ public class Box
 
     public void Add(Lens lens)
     {
-        var existingLabeledLens = lenses.FirstOrDefault(l => l.AsSameLabelAs(lens));
-        if (existingLabeledLens != null)
+        var existing = lenses.FindIndex(l => l.AsSameLabelAs(lens));
+        if (existing != -1)
         {
-            var indexOfExistingLens = lenses.IndexOf(existingLabeledLens);
-
-            lenses.Insert(indexOfExistingLens, lens);
-            lenses.RemoveAt(indexOfExistingLens + 1);
+            lenses[existing] = lens;
         }
         else
         {
@@ -49,11 +46,10 @@ public class Box
     ///     - The slot number of the lens within the box: 1 for the first lens, 2 for the second lens, and so on.
     ///     - The focal length of the lens.
     /// </summary>
-    /// <returns></returns>
     public int FocusingPower()
-    {
-        var boxNumber = 1 + number;
-
-        return lenses.Select((lens, slotIndex) => boxNumber * lens.FocalLength * (slotIndex + 1)).Sum();
-    }
+        => (from lens in lenses
+            let onePlusBoxNumber = 1 + number
+            let slotNumber = lenses.IndexOf(lens) + 1
+            let focalLength = lens.FocalLength
+            select onePlusBoxNumber * slotNumber * focalLength).Sum();
 }
