@@ -24,6 +24,21 @@ public class PuzzleShould
     public void Should_sum_initialization_sequence_hash_steps(string initializationSequence, int result)
         => initializationSequence.Split(',').Select(Hash).Sum().Should().Be(result);
 
+
+    [Theory]
+    [InlineData("rn=1", 0)]
+    [InlineData("cm-", 0)]
+    [InlineData("qp=3", 1)]
+    [InlineData("cm=2", 0)]
+    [InlineData("qp-", 1)]
+    [InlineData("pc=4", 3)]
+    [InlineData("ot=9", 3)]
+    public void Should_determine_box_number_for_initialization_step(string initializationStep, int result)
+        => BoxNumber(initializationStep).Should().Be(result);
+
+    private static int BoxNumber(string initializationStep)
+        => Hash(initializationStep.Split('=', '-')[0]);
+
     /// <summary>
     ///     - Determine the ASCII code for the current character of the string.
     ///     - Increase the current value by the ASCII code you just determined.
