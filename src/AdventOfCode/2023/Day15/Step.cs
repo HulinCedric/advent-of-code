@@ -1,31 +1,22 @@
+using System;
+
 namespace AdventOfCode._2023.Day15;
 
-public record Step
+public abstract record Step(string Label)
 {
-    public Step(string Label, char Operation)
-    {
-        this.Label = Label;
-        this.Operation = Operation;
-    }
-
-
-    public string Label { get; init; }
-    public char Operation { get; init; }
-
     public static Step Parse(string initializationStep)
     {
         var parts = initializationStep.Split('=', '-');
 
         var label = parts[0];
-        var operation = parts[1] == "" ? '-' : '=';
+        var operation = initializationStep[label.Length];
 
-
-        if (operation == '=')
+        return operation switch
         {
-            return new AssignStep(label, operation, int.Parse(parts[1]));
-        }
-
-        return new RemoveStep(label, operation);
+            AssignStep.Operation => new AssignStep(label, int.Parse(parts[1])),
+            RemoveStep.Operation => new RemoveStep(label),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     public int Hash()
@@ -34,27 +25,27 @@ public record Step
     public int BoxNumber()
         => Hasher.Hash(Label);
 
-    public override string ToString()
-        => $"{Label}{Operation}";
+    public abstract void Execute(Box box);
 }
 
-internal record AssignStep : Step
+internal record AssignStep(string Label, int FocalLength) : Step(Label)
 {
-    public AssignStep(string Label, char Operation, int FocalLength) : base(Label, Operation)
-        => this.FocalLength = FocalLength;
+    internal const char Operation = '=';
 
-    public int FocalLength { get; }
+    public override void Execute(Box box)
+        => box.Add(new Lens(Label, FocalLength));
 
     public override string ToString()
         => $"{Label}{Operation}{FocalLength}";
 }
 
-internal record RemoveStep : Step
+internal record RemoveStep(string Label) : Step(Label)
 {
-    public RemoveStep(string Label, char Operation) : base(Label, Operation)
-    {
-    }
+    internal const char Operation = '-';
+
+    public override void Execute(Box box)
+        => box.RemoveLensWithLabel(Label);
 
     public override string ToString()
-        => base.ToString();
+        => $"{Label}{Operation}";
 }
