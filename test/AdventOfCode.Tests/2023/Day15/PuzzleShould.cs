@@ -62,6 +62,19 @@ public class PuzzleShould
         box.ToString().Should().Be("Box 3: [pc 4] [ot 9]");
     }
 
+    [Fact]
+    public void Should_remove_labeled_lens()
+    {
+        var box = new Box(3);
+        box.Add("pc 4");
+        box.Add("ot 9");
+        box.Add("ab 5");
+
+        box.RemoveLensWithLabel("pc");
+
+        box.ToString().Should().Be("Box 3: [ot 9] [ab 5]");
+    }
+
     private InitializationStep Parse(string initializationStep)
     {
         var parts = initializationStep.Split('=', '-');
@@ -135,6 +148,9 @@ public class Box
 
     public void Add(string lens)
         => lenses.Add(lens);
+
+    public void RemoveLensWithLabel(string label)
+        => lenses.RemoveAll(lens => lens.StartsWith(label));
 }
 
 internal readonly record struct InitializationStep(string Label, char Operation, int? FocalLength);
