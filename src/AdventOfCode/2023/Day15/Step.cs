@@ -7,30 +7,15 @@ public record Step(string Label, char Operation, int? FocalLength)
         var parts = initializationStep.Split('=', '-');
 
         var label = parts[0];
+        var operation = parts[1] == "" ? '-' : '=';
+        var focalLength = operation == '-' ? (int?)null : int.Parse(parts[1]);
 
-        var isDash = parts[1] == "";
-        char operation;
-        int? focalLength;
-        if (isDash)
-        {
-            operation = '-';
-            focalLength = null;
-        }
-        else
-        {
-            operation = '=';
-            focalLength = int.Parse(parts[1]);
-        }
-
-        return new Step(
-            label,
-            operation,
-            focalLength);
+        return new Step(label, operation, focalLength);
     }
 
     public int Hash()
         => Hasher.Hash(ToString());
-    
+
     public int BoxNumber()
         => Hasher.Hash(Label);
 
