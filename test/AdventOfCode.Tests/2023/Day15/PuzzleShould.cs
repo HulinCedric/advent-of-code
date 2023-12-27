@@ -130,13 +130,7 @@ public class Box
             return "";
         }
 
-
-        if (lenses.Count == 1)
-        {
-            return "Box " + number + ": [" + lenses.First() + "]";
-        }
-
-        return "Box " + number + ": [" + lenses.First() + "] [" + lenses.Last() + "]";
+        return "Box " + number + ": [" + string.Join("] [", lenses) + "]";
     }
 
     public void Add(string lens)
