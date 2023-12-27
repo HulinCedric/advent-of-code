@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -40,18 +41,26 @@ public class PuzzleShould
     [Fact]
     public void Should_not_print_box_when_no_lens_inside()
     {
-        var box = new Box(1);
+        var box = new Box(3);
         box.ToString().Should().BeEmpty();
     }
 
     [Fact]
     public void Should_print_box_when_lens_inside()
     {
-        var box = new Box(1);
-        box.Add("qp 3");
-        box.ToString().Should().Be("Box 1: [qp 3]");
+        var box = new Box(3);
+        box.Add("pc 4");
+        box.ToString().Should().Be("Box 3: [pc 4]");
     }
 
+    [Fact]
+    public void Should_print_box_when_multiple_lens_inside()
+    {
+        var box = new Box(3);
+        box.Add("pc 4");
+        box.Add("ot 9");
+        box.ToString().Should().Be("Box 3: [pc 4] [ot 9]");
+    }
 
     private InitializationStep Parse(string initializationStep)
     {
@@ -104,25 +113,34 @@ public class PuzzleShould
 
 public class Box
 {
+    private readonly List<string> lenses;
     private readonly int number;
-    private string lens;
 
 
     public Box(int number)
-        => this.number = number;
+    {
+        this.number = number;
+        lenses = new List<string>();
+    }
 
     public override string ToString()
     {
-        if (string.IsNullOrEmpty(lens))
+        if (lenses.Count == 0)
         {
             return "";
         }
 
-        return "Box " + number + ": [" + lens + "]";
+
+        if (lenses.Count == 1)
+        {
+            return "Box " + number + ": [" + lenses.First() + "]";
+        }
+
+        return "Box " + number + ": [" + lenses.First() + "] [" + lenses.Last() + "]";
     }
 
     public void Add(string lens)
-        => this.lens = lens;
+        => lenses.Add(lens);
 }
 
 internal readonly record struct InitializationStep(string Label, char Operation, int? FocalLength);
