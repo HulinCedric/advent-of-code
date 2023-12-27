@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 using static AdventOfCode._2023.Day15.InitializationSequence;
