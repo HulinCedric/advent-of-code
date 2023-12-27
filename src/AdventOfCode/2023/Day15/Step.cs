@@ -1,8 +1,8 @@
 namespace AdventOfCode._2023.Day15;
 
-public record InitializationStep(string Label, char Operation, int? FocalLength)
+public record Step(string Label, char Operation, int? FocalLength)
 {
-    public static InitializationStep Parse(string initializationStep)
+    public static Step Parse(string initializationStep)
     {
         var parts = initializationStep.Split('=', '-');
 
@@ -22,9 +22,18 @@ public record InitializationStep(string Label, char Operation, int? FocalLength)
             focalLength = int.Parse(parts[1]);
         }
 
-        return new InitializationStep(
+        return new Step(
             label,
             operation,
             focalLength);
     }
+
+    public int Hash()
+        => Hasher.Hash(ToString());
+    
+    public int BoxNumber()
+        => Hasher.Hash(Label);
+
+    public override string ToString()
+        => $"{Label}{Operation}{FocalLength}";
 }
