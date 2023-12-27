@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 using static AdventOfCode._2023.Day15.InitializationSequence;
@@ -25,22 +26,10 @@ public class PuzzleShould
     {
         var steps = Parse(initializationSequence);
 
-        var boxes = Enumerable.Range(0, 256).Select(boxNumber => new Box(boxNumber)).ToList();
+        var lensLibrary = LensLibrary.Create();
 
-        foreach (var step in steps)
-        {
-            var box = boxes.First(box => box.Number == step.BoxNumber());
-            switch (step.Operation)
-            {
-                case '=':
-                    box.Add(step.Label + " " + step.FocalLength);
-                    break;
-                case '-':
-                    box.RemoveLensWithLabel(step.Label);
-                    break;
-            }
-        }
+        lensLibrary.Execute(steps);
 
-        boxes.Sum(box => box.FocusingPower()).Should().Be(result);
+        lensLibrary.FocusingPower().Should().Be(result);
     }
 }
