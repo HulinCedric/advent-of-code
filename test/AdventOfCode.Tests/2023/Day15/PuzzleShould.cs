@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using Xunit;
 
 namespace AdventOfCode._2023.Day15;
@@ -6,10 +7,10 @@ namespace AdventOfCode._2023.Day15;
 public class PuzzleShould
 {
     [Theory]
-    [InputFileData("2023/Day15/sample.txt", 1320)]
-    // [InputFileData("2023/Day15/input.txt", ?)]
-    public void Sum_of_the_results(string map, int results)
-        => results.Should().Be(results);
+    [InputFileData("2023/Day15/sample.txt", 1_320)]
+    [InputFileData("2023/Day15/input.txt", 520_500)]
+    public void Sum_of_the_results(string initializationSequence, int result)
+        => initializationSequence.Split(',').Select(Hash).Sum().Should().Be(result);
 
 
     [Theory]
@@ -17,6 +18,11 @@ public class PuzzleShould
     [InlineData("HASH", 52)]
     public void Should_Hash(string toHash, int result)
         => Hash(toHash).Should().Be(result);
+
+    [Theory]
+    [InlineData("rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7", 1_320)]
+    public void Should_sum_initialization_sequence_hash_steps(string initializationSequence, int result)
+        => initializationSequence.Split(',').Select(Hash).Sum().Should().Be(result);
 
     /// <summary>
     ///     - Determine the ASCII code for the current character of the string.
