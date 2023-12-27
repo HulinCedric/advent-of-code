@@ -36,6 +36,15 @@ public class PuzzleShould
     public void Should_determine_box_number_for_initialization_step(string initializationStep, int result)
         => BoxNumber(Parse(initializationStep)).Should().Be(result);
 
+
+    [Fact]
+    public void Should_not_print_box_when_no_lens_inside()
+    {
+        var box = new Box(1);
+        box.ToString().Should().BeEmpty();
+    }
+
+
     private InitializationStep Parse(string initializationStep)
     {
         var parts = initializationStep.Split('=', '-');
@@ -83,6 +92,17 @@ public class PuzzleShould
 
         return hash;
     }
+}
+
+public class Box
+{
+    private readonly int number;
+
+    public Box(int number)
+        => this.number = number;
+
+    public override string ToString()
+        => "";
 }
 
 internal readonly record struct InitializationStep(string Label, char Operation, int? FocalLength);
