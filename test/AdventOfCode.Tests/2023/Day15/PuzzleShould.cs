@@ -34,10 +34,36 @@ public class PuzzleShould
     [InlineData("pc=4", 3)]
     [InlineData("ot=9", 3)]
     public void Should_determine_box_number_for_initialization_step(string initializationStep, int result)
-        => BoxNumber(initializationStep).Should().Be(result);
+        => BoxNumber(Parse(initializationStep)).Should().Be(result);
 
-    private static int BoxNumber(string initializationStep)
-        => Hash(initializationStep.Split('=', '-')[0]);
+    private InitializationStep Parse(string initializationStep)
+    {
+        var parts = initializationStep.Split('=', '-');
+
+        var label = parts[0];
+
+        var isDash = parts[1] == "";
+        char operation;
+        int? focalLength;
+        if (isDash)
+        {
+            operation = '-';
+            focalLength = null;
+        }
+        else
+        {
+            operation = '=';
+            focalLength = int.Parse(parts[1]);
+        }
+
+        return new InitializationStep(
+            label,
+            operation,
+            focalLength);
+    }
+
+    private static int BoxNumber(InitializationStep initializationStep)
+        => Hash(initializationStep.Label);
 
     /// <summary>
     ///     - Determine the ASCII code for the current character of the string.
@@ -58,3 +84,5 @@ public class PuzzleShould
         return hash;
     }
 }
+
+internal readonly record struct InitializationStep(string Label, char Operation, int? FocalLength);
