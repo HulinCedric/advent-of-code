@@ -54,4 +54,15 @@ public class BoxShould
 
         box.ToString().Should().Be("Box 3: [ot 9] [ab 5]");
     }
+
+    [Fact]
+    public void Calculate_focusing_power()
+    {
+        var box = new Box(3);
+        box.Add("ot 7");
+        box.Add("ab 5");
+        box.Add("pc 6");
+
+        box.FocusingPower().Should().Be(140);
+    }
 }
