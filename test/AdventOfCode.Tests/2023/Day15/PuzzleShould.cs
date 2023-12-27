@@ -63,6 +63,19 @@ public class PuzzleShould
     }
 
     [Fact]
+    public void Should_replace_lens_with_same_label()
+    {
+        var box = new Box(3);
+        box.Add("ot 9");
+        box.Add("ab 5");
+        box.Add("pc 6");
+
+        box.Add("ot 7");
+
+        box.ToString().Should().Be("Box 3: [ot 7] [ab 5] [pc 6]");
+    }
+
+    [Fact]
     public void Should_remove_labeled_lens()
     {
         var box = new Box(3);
@@ -147,7 +160,23 @@ public class Box
     }
 
     public void Add(string lens)
-        => lenses.Add(lens);
+    {
+        var label = lens.Split(' ')[0];
+
+
+        var existingLabeledLens = lenses.FirstOrDefault(lens => lens.StartsWith(label));
+        if (existingLabeledLens != null)
+        {
+            var indexOfExistingLens = lenses.IndexOf(existingLabeledLens);
+
+            lenses.Insert(indexOfExistingLens, lens);
+            lenses.RemoveAt(indexOfExistingLens + 1);
+        }
+        else
+        {
+            lenses.Add(lens);
+        }
+    }
 
     public void RemoveLensWithLabel(string label)
         => lenses.RemoveAll(lens => lens.StartsWith(label));
