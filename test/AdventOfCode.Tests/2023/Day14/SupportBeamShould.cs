@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Xunit;
-using static AdventOfCode._2023.Day14.MapParser;
+using static AdventOfCode._2023.Day14.Map;
 using static AdventOfCode._2023.Day14.SupportBeam;
 
 namespace AdventOfCode._2023.Day14;
