@@ -6,11 +6,11 @@ namespace AdventOfCode._2023.Day15;
 public class Box
 {
     private readonly List<Lens> lenses;
-    private readonly int number;
+    public int Number { get; }
 
     public Box(int number)
     {
-        this.number = number;
+        this.Number = number;
         lenses = new List<Lens>();
     }
 
@@ -21,7 +21,7 @@ public class Box
             return "";
         }
 
-        return "Box " + number + ": [" + string.Join("] [", lenses) + "]";
+        return "Box " + Number + ": [" + string.Join("] [", lenses) + "]";
     }
 
     public void Add(string lensInfo)
@@ -65,7 +65,7 @@ public class Box
     /// <returns></returns>
     public int FocusingPower()
     {
-        var boxNumber = 1 + number;
+        var boxNumber = 1 + Number;
 
         return lenses.Select((lens, slotIndex) => boxNumber * lens.FocalLength * (slotIndex + 1)).Sum();
     }
