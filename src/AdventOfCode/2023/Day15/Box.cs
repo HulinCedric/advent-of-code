@@ -28,7 +28,7 @@ public class Box
     {
         var parts = lensInfo.Split(' ');
 
-        var lens = new Lens(parts[0], parts[1]);
+        var lens = new Lens(parts[0], int.Parse(parts[1]));
 
         var existingLabeledLens = lenses.FirstOrDefault(l => l.AsSameLabelAs(lens));
         if (existingLabeledLens != null)
@@ -67,6 +67,6 @@ public class Box
     {
         var boxNumber = 1 + number;
 
-        return lenses.Select((lens, slotIndex) => boxNumber * int.Parse(lens.FocalLength) * (slotIndex + 1)).Sum();
+        return lenses.Select((lens, slotIndex) => boxNumber * lens.FocalLength * (slotIndex + 1)).Sum();
     }
 }

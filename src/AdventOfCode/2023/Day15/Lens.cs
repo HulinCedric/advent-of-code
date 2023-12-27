@@ -1,6 +1,6 @@
 namespace AdventOfCode._2023.Day15;
 
-internal record Lens(string Label, string FocalLength)
+internal record Lens(string Label, int FocalLength)
 {
     public override string ToString()
         => Label + " " + FocalLength;
