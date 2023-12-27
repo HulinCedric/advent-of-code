@@ -139,14 +139,14 @@ public class PuzzleShould
 
 public class Box
 {
-    private readonly List<string> lenses;
+    private readonly List<Lens> lenses;
     private readonly int number;
 
 
     public Box(int number)
     {
         this.number = number;
-        lenses = new List<string>();
+        lenses = new List<Lens>();
     }
 
     public override string ToString()
@@ -159,12 +159,13 @@ public class Box
         return "Box " + number + ": [" + string.Join("] [", lenses) + "]";
     }
 
-    public void Add(string lens)
+    public void Add(string lensInfo)
     {
-        var label = lens.Split(' ')[0];
+        var parts = lensInfo.Split(' ');
 
+        var lens = new Lens(parts[0], parts[1]);
 
-        var existingLabeledLens = lenses.FirstOrDefault(lens => lens.StartsWith(label));
+        var existingLabeledLens = lenses.FirstOrDefault(l => l.Label.StartsWith(parts[0]));
         if (existingLabeledLens != null)
         {
             var indexOfExistingLens = lenses.IndexOf(existingLabeledLens);
@@ -179,7 +180,13 @@ public class Box
     }
 
     public void RemoveLensWithLabel(string label)
-        => lenses.RemoveAll(lens => lens.StartsWith(label));
+        => lenses.RemoveAll(lens => lens.Label.StartsWith(label));
 }
 
-internal readonly record struct InitializationStep(string Label, char Operation, int? FocalLength);
+internal record Lens(string Label, string FocalLength)
+{
+    public override string ToString()
+        => Label + " " + FocalLength;
+}
+
+internal record InitializationStep(string Label, char Operation, int? FocalLength);
