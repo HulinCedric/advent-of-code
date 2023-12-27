@@ -27,25 +27,3 @@ public abstract record Step(string Label)
 
     public abstract void Execute(Box box);
 }
-
-internal record AssignStep(string Label, int FocalLength) : Step(Label)
-{
-    internal const char Operation = '=';
-
-    public override void Execute(Box box)
-        => box.Add(new Lens(Label, FocalLength));
-
-    public override string ToString()
-        => $"{Label}{Operation}{FocalLength}";
-}
-
-internal record RemoveStep(string Label) : Step(Label)
-{
-    internal const char Operation = '-';
-
-    public override void Execute(Box box)
-        => box.RemoveLensWithLabel(Label);
-
-    public override string ToString()
-        => $"{Label}{Operation}";
-}
