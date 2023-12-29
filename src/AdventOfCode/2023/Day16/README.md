@@ -10,8 +10,8 @@ Finally, as you approach what must be the heart of the mountain, you see a brigh
 discover that the beam of light you so carefully focused is emerging from the cavern wall closest to the facility and
 pouring all of its energy into a contraption on the opposite side.
 
-Upon closer inspection, the contraption appears to be a flat, two-dimensional square grid containing **empty space
-** (`.`), **mirrors** (`/` and `\`), and **splitters** (`|` and `-`).
+Upon closer inspection, the contraption appears to be a flat, two-dimensional square grid containing
+**empty space** (`.`), **mirrors** (`/` and `\`), and **splitters** (`|` and `-`).
 
 The contraption is aligned so that most of the beam bounces around the grid, but each tile on the grid converts some of
 the beam's light into **heat** to melt the rock in the cavern.
@@ -47,8 +47,8 @@ encounters as it moves:
   encounters a `|` splitter would split into two beams: one that continues **upward** from the splitter's column and one
   that continues **downward** from the splitter's column.
 
-Beams do not interact with other beams; a tile can have many beams passing through it at the same time. A tile is *
-*energized** if that tile has at least one beam pass through it, reflect in it, or split in it.
+Beams do not interact with other beams; a tile can have many beams passing through it at the same time. A tile is
+**energized** if that tile has at least one beam pass through it, reflect in it, or split in it.
 
 In the above example, here is how the beam of light bounces around the contraption:
 
