@@ -7,7 +7,6 @@ using static VerifyXunit.Verifier;
 
 namespace AdventOfCode._2023.Day13;
 
-[UsesVerify]
 public class MapShould
 {
     [Theory]
