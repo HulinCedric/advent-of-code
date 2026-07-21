@@ -23,6 +23,9 @@ on:
 ###############
 # Set the Job #
 ###############
+permissions:
+  contents: read
+
 jobs:
   build:
     # Name the Job
